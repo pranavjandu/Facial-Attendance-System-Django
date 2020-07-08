@@ -1,4 +1,7 @@
 {% extends 'base.html'%}
+{% block title%}
+Admin Dashboard
+{% endblock title %}
 
 {% block sidebarstuff %}
                         
@@ -9,21 +12,21 @@
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'mcourses' %}">
+    <a class="nav-link" href="{% url 'addCourses' %}">
         <span data-feather="file"></span>
-        Manage Courses
+        Add Courses
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="{% url 'register' %}">
         <span data-feather="shopping-cart"></span>
         Manage Students
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="{% url 'addInstructor' %}">
         <span data-feather="users"></span>
-        Manage Instructors
+        Add Instructor
     </a>
 </li>
 <li class="nav-item">

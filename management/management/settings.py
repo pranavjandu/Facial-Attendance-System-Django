@@ -121,3 +121,4 @@ USE_TZ = True
 
 STATIC_URL = '/staticfiles/'
 STATIC_ROOT = 'staticfiles'
+AUTH_USER_MODEL="account.CustomUser"

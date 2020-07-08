@@ -1,7 +1,7 @@
 {% extends 'base.html'%}
 
 {% block sidebarstuff %}
-                        
+
 <li class="nav-item">
     <a class="nav-link" href="{% url 'dashboard' %}">
         <span data-feather="home"></span>
@@ -9,21 +9,21 @@
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'mcourses' %}">
+    <a class="nav-link " href="{% url 'mcourses' %}">
         <span data-feather="file"></span>
         Manage Courses
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'register' %}">
+    <a class="nav-link active" href="{% url 'register' %}">
         <span data-feather="shopping-cart"></span>
         Manage Students
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'addInstructor' %}">
+    <a class="nav-link" href="#">
         <span data-feather="users"></span>
-        Add Instructor
+        Manage Instructors
     </a>
 </li>
 <li class="nav-item">
@@ -46,19 +46,17 @@
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
     <div class="row">
-        <div class="col-sm-6 mt-md-5">
+        <div class="col-sm-10 mt-md-5">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Add Course</h5>
-                    <a href="#" class="btn btn-primary">Click</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6 mt-md-5">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Manage Course</h5>
-                    <a href="#" class="btn btn-primary">Click</a>
+                    <h5 class="card-title">Add Student</h5>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        {{form2.as_p}}
+                        <br/>
+                        <input type="submit" class="btn btn-primary" name="Add"> 
+                    </form>
                 </div>
             </div>
         </div>
