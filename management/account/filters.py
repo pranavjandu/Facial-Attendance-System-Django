@@ -13,4 +13,11 @@ class StudentFilter(django_filters.FilterSet):
     class Meta:
         model=Students
         fields=["name",]
+
+class CourseFilter(django_filters.FilterSet):
+    name=CharFilter(field_name="course_name",lookup_expr='icontains')
+    class Meta:
+        model=Course
+        fields=["course_name",]
+        exclude=["course_name",]
     

@@ -13,5 +13,6 @@ urlpatterns = [
     path('addBatch',views.addBatch,name="addBatch"),
     path('addStudent',views.registerStudent,name="addStudent"),
     path('managei',views.manageInstructor,name="managei"),
-    path('manages',views.manageStudent,name="manages")
+    path('manages',views.manageStudent,name="manages"),
+    path('managec',views.manageCourse,name="managec")
 ]

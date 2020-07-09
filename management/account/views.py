@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render,HttpResponse
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from .forms import AddStudentForm
-from .filters import InstructorFilter,StudentFilter
+from .filters import InstructorFilter,StudentFilter,CourseFilter
 
 # Create your views here.
 
@@ -19,7 +19,7 @@ def loginpage(request):
             messages.info(request,"wrong credentials")
 
     return render(request,'login.html')
-
+ 
 def registerInstructor(request):
     if request.method=="POST":
         first_name=request.POST.get("first_name")
@@ -122,3 +122,9 @@ def manageStudent(request):
     myfilter=StudentFilter(request.GET,queryset=stu)
     stu=myfilter.qs
     return render(request,"HOD/manage_students.html",{"students":stu,"myfilter":myfilter})
+
+def manageCourse(request):
+    cou=Course.objects.all()
+    myfilter=CourseFilter(request.GET,queryset=cou)
+    cou=myfilter.qs
+    return render(request,"HOD/manage_course.html",{"courses":cou,"myfilter":myfilter})

@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Add Course
+Manage Course
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -12,7 +12,7 @@ Add Course
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'addCourses' %}">
+    <a class="nav-link" href="{% url 'addCourses' %}">
         <span data-feather="file"></span>
         Add Course
     </a>
@@ -48,7 +48,7 @@ Add Course
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'managec' %}">
+    <a class="nav-link active" href="{% url 'managec' %}">
         <span data-feather="layers"></span>
         Manage Course
     </a>
@@ -61,37 +61,43 @@ Add Course
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
     <div class="row">
         <div class="col-md-12 ">
-            <div class="card card-primary mt-5">
+            <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Add Course</h3>
-                </div>
-                <form role="form" action="" method="POST">
-                    {% csrf_token %}
-                    <div class="card-body">
-                        <div class="form-group">
-                            {% if messages %}
-                            {% for message in messages %}
-                            {% if message.tags == 'error' %}
-                            <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
-                            {% endif %}
-                            {% if message.tags == 'success' %}
-                            <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
-                            {% endif %}
-                            {% endfor %}
-                            {% endif %}
-                        </div>
-                        <div class="form-group">
-                            <label>Course Name</label>
-                            <input type="text" class="form-control" placeholder="Course Name" name="course_name" required>
-                        </div>
-                    </div>
+                    <h3 class="card-title">Student Details</h3>
 
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-primary btn-block">Add Course</button>
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <form method="GET">
+                                {{myfilter.form}}
+                                
+                                <button type="submit" class="btn btn-info">Search</button>
+                                </form>
+                            </form>
+                        </div>
                     </div>
-                </form>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                            <tr>
+                                <td>{{ course.course_name }}</td>
+                                <td><a href="/edit_student/{{ course.id }}" class="btn btn-warning">Edit</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+
     </div>
 </main>
 
