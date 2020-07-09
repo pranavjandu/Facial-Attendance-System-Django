@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render,HttpResponse
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from .forms import AddStudentForm
-from .filters import InstructorFilter,StudentFilter,CourseFilter
+from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
 
 # Create your views here.
 
@@ -128,3 +128,9 @@ def manageCourse(request):
     myfilter=CourseFilter(request.GET,queryset=cou)
     cou=myfilter.qs
     return render(request,"HOD/manage_course.html",{"courses":cou,"myfilter":myfilter})
+
+def manageBatch(request):
+    bat=Batch.objects.all()
+    myfilter=BatchFilter(request.GET,queryset=bat)
+    bat=myfilter.qs
+    return render(request,"HOD/manage_batch.html",{"batches":bat,"myfilter":myfilter})

@@ -20,4 +20,11 @@ class CourseFilter(django_filters.FilterSet):
         model=Course
         fields=["course_name",]
         exclude=["course_name",]
+
+class BatchFilter(django_filters.FilterSet):
+    name=CharFilter(field_name="batch_name",lookup_expr='icontains')
+    class Meta:
+        model=Batch
+        fields='__all__'
+        exclude=['batch_name',]
     

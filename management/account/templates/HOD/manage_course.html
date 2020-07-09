@@ -53,6 +53,12 @@ Manage Course
         Manage Course
     </a>
 </li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'manageb' %}">
+        <span data-feather="layers"></span>
+        Manage Batch
+    </a>
+</li>
 
 {% endblock sidebarstuff %}
 
@@ -63,7 +69,7 @@ Manage Course
         <div class="col-md-12 ">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Student Details</h3>
+                    <h3 class="card-title">Course Details</h3>
 
                     <div class="card-tools">
                         <div class="input-group input-group-sm" style="width: 150px;">
@@ -88,7 +94,7 @@ Manage Course
                             {% for course in courses %}
                             <tr>
                                 <td>{{ course.course_name }}</td>
-                                <td><a href="/edit_student/{{ course.id }}" class="btn btn-warning">Edit</a>
+                                <td><a href="/edit_course/{{ course.id }}" class="btn btn-warning">Edit</a>
                                 </td>
                             </tr>
                             {% endfor %}

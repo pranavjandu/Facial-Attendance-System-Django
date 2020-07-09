@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Manage Student
+Manage Batch
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -42,7 +42,7 @@ Manage Student
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'manages' %}">
+    <a class="nav-link" href="{% url 'manages' %}">
         <span data-feather="layers"></span>
         Manage Student
     </a>
@@ -54,7 +54,7 @@ Manage Student
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'manageb' %}">
+    <a class="nav-link active" href="{% url 'manageb' %}">
         <span data-feather="layers"></span>
         Manage Batch
     </a>
@@ -69,10 +69,10 @@ Manage Student
         <div class="col-md-12 ">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Student Details</h3>
+                    <h3 class="card-title">Batch Details</h3>
 
                     <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: 150px;">
+                        <div class="input-group input-group-sm" style="width: auto;">
                             <form method="GET">
                                 {{myfilter.form}}
                                 
@@ -86,23 +86,19 @@ Manage Student
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Batch Name</th>
-                                <th>User Name</th>
-                                <th>Email</th>
-                                <th>Last Login</th>
+                                <th>Batch</th>
+                                <th>Course Name</th>
+                                <th>Instructor Assigned</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for student in students %}
+                            {% for batch in batches %}
                             <tr>
-                                <td>{{ student.name }}</td>
-                                <td>{{ student.batch_id }}</td>
-                                <td>{{ student.user.username }}</td>
-                                <td>{{ student.user.email }}</td>
-                                <td>{{ student.user.last_login }}</td>
-                                <td><a href="/edit_student/{{ student.user.id }}" class="btn btn-warning">Edit</a>
+                                <td>{{ batch.batch_name }}</td>
+                                <td>{{ batch.course_id }}</td>
+                                <td>{{ batch.instructor_id }}</td>
+                                <td><a href="/edit_batch/{{ batch.id }}" class="btn btn-warning">Edit</a>
                                 </td>
                             </tr>
                             {% endfor %}
