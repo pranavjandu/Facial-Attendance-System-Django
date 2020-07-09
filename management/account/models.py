@@ -6,7 +6,7 @@ from django.dispatch import receiver
 
 
 class CustomUser(AbstractUser):
-    user_type_data=((1,"Admin"),(2,"Instructor"),(3,"Student"))
+    user_type_data=((1,"Admin"),(2,"Instructor"),(3,"Students"))
     user_type=models.CharField(default=1,choices=user_type_data,max_length=10)
 
 
@@ -42,16 +42,13 @@ class Batch(models.Model):
     instructor_id=models.ForeignKey(Instructor,on_delete=models.CASCADE)
     objects=models.Manager()
     def __str__(self):
-        name=self.course_id
-        name=name.course_name
-        batchn=self.batch_name+" "+name
-        return batchn
+        return self.batch_name
 
 class Students(models.Model):
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=255,null=True,blank=True)
     user=models.OneToOneField(CustomUser,on_delete=models.CASCADE)
-    batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING)
+    batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING,default=1)
     objects = models.Manager()
     def __str__(self):
         return self.name
@@ -71,7 +68,7 @@ class AttendanceReport(models.Model):
 
 class Mark(models.Model):
     id=models.AutoField(primary_key=True)
-    batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING)
+    batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING,default=1)
     test_date=models.DateField(auto_now_add=True)
     objects = models.Manager()
 

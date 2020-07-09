@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Add Course
+Add Student
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -12,7 +12,7 @@ Add Course
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'addCourses' %}">
+    <a class="nav-link" href="{% url 'addCourses' %}">
         <span data-feather="file"></span>
         Add Course
     </a>
@@ -30,7 +30,7 @@ Add Course
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'addStudent' %}">
+    <a class="nav-link active" href="{% url 'addStudent' %}">
         <span data-feather="bar-chart-2"></span>
         Add Student
     </a>
@@ -51,9 +51,9 @@ Add Course
         <div class="col-md-12 ">
             <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Add Course</h3>
+                    <h3 class="card-title">Add Student</h3>
                 </div>
-                <form role="form" action="" method="POST">
+                <form role="form" action="" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body">
                         <div class="form-group">
@@ -68,14 +68,18 @@ Add Course
                             {% endfor %}
                             {% endif %}
                         </div>
+                        {% for field in form %}
                         <div class="form-group">
-                            <label>Course Name</label>
-                            <input type="text" class="form-control" placeholder="Course Name" name="course_name" required>
+                            {{ field.label_tag }}
+                            {{ field }}
                         </div>
+                        {% endfor %}
+
+
                     </div>
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary btn-block">Add Course</button>
+                        <button type="submit" class="btn btn-primary btn-block">Add Student</button>
                     </div>
                 </form>
             </div>

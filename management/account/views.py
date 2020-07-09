@@ -1,8 +1,9 @@
-from .models import CustomUser
+from .models import Batch, Course, CustomUser, Instructor
 from django.shortcuts import redirect, render,HttpResponse
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
-from .forms import StudentForm,CreateUserModel
+from .forms import AddStudentForm
+
 # Create your views here.
 
 def loginpage(request):
@@ -39,11 +40,74 @@ def registerInstructor(request):
             return redirect('addInstructor')
     return render(request,'HOD/add_instructor.html')
 
+
+def registerStudent(request):
+    
+    if request.method=="POST":
+        form=AddStudentForm(request.POST)
+        if form.is_valid():
+            first_name=form.cleaned_data["first_name"]
+            last_name=form.cleaned_data["last_name"]
+            username=form.cleaned_data["username"]
+            email=form.cleaned_data["email"]
+            password=form.cleaned_data["password"]
+            batch=form.cleaned_data["batch1"]
+            try:
+                user=CustomUser.objects.create_user(username=username,password=password,email=email,last_name=last_name,first_name=first_name,user_type=3)
+                user.students.name=first_name+" "+last_name
+                batch_obj=Batch.objects.get(id=batch)
+                user.students.batch_id=batch_obj
+                user.save()
+                messages.success(request," Student added successfully ")
+                return redirect('addStudent')
+            except:
+                messages.error(request," Error occured. Please Try again!")
+                return redirect('addStudent')
+        else:
+            messages.error(request," Error occured. Please Try again!")
+            return redirect('addStudent')
+    
+    form=AddStudentForm()
+    return render(request,'HOD/add_student.html',{"form":form})
+
 def dash(request):
     return render(request,'HOD/dashboard.html')
 
-def manageCourse(request):
-    return render(request,'HOD/course.html')
+def addCourse(request):
+    if request.method=="POST":
+        course_name=request.POST.get("course_name")
+        try:
+            course=Course(course_name=course_name)
+            course.save()
+            messages.success(request,"Course "+course_name+" successfully added! ")
+            return redirect('addCourses')
+        except:
+            messages.error(request,"Error occured ! Please Try again.")
+            return redirect('addCourses')
+    return render(request,'HOD/add_course.html')
+
+
+def addBatch(request):
+    if request.method=="POST":
+        batch_name=request.POST.get("batch_name")
+        course=request.POST.get("course_id")
+        instructor=request.POST.get("instructor_id")
+        try:
+            course_obj=Course.objects.get(id=course)
+            name=course_obj.course_name
+            name=batch_name+" "+name
+            instructor_obj=Instructor.objects.get(id=instructor)
+            batch=Batch(batch_name=name,course_id=course_obj,instructor_id=instructor_obj)
+            batch.save()
+            messages.success(request,"Batch "+batch_name+" successfully added! ")
+            return redirect('addBatch')
+        except:
+            messages.error(request,"Error occured ! Please Try again.")
+            return redirect('addBatch')
+    courses=Course.objects.all()
+    instructors=Instructor.objects.all()
+    context={'courses':courses,'instructors':instructors}
+    return render(request,'HOD/add_batch.html',context)
 
 def logoutUser(request):
     logout(request)

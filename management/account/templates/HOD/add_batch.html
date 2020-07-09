@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Add Course
+Add Batch
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -12,13 +12,13 @@ Add Course
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'addCourses' %}">
+    <a class="nav-link" href="{% url 'addCourses' %}">
         <span data-feather="file"></span>
         Add Course
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'addBatch' %}">
+    <a class="nav-link active" href="{% url 'addBatch' %}">
         <span data-feather="shopping-cart"></span>
         Add Batch
     </a>
@@ -51,7 +51,7 @@ Add Course
         <div class="col-md-12 ">
             <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Add Course</h3>
+                    <h3 class="card-title">Add Batch</h3>
                 </div>
                 <form role="form" action="" method="POST">
                     {% csrf_token %}
@@ -69,13 +69,29 @@ Add Course
                             {% endif %}
                         </div>
                         <div class="form-group">
+                            <label>Batch Name</label>
+                            <input type="text" class="form-control" placeholder="Batch Name" name="batch_name" required>
+                        </div>
+                        <div class="form-group">
                             <label>Course Name</label>
-                            <input type="text" class="form-control" placeholder="Course Name" name="course_name" required>
+                            <select class="form-control" name="course_id">
+                                {% for course in courses %}
+                                <option value="{{ course.id }}"> {{ course.course_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Instructor Teaching</label>
+                            <select class="form-control" name="instructor_id">
+                                {% for instructor in instructors %}
+                                <option value="{{ instructor.id }}"> {{ instructor.name }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
 
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary btn-block">Add Course</button>
+                        <button type="submit" class="btn btn-primary btn-block">Add Batch to Course</button>
                     </div>
                 </form>
             </div>
