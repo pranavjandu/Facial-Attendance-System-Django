@@ -12,5 +12,6 @@ urlpatterns = [
     path('addCourse',views.addCourse,name="addCourses"),
     path('addBatch',views.addBatch,name="addBatch"),
     path('addStudent',views.registerStudent,name="addStudent"),
-    path('register',views.registerStudent,name="register")
+    path('managei',views.manageInstructor,name="managei"),
+    path('manages',views.manageStudent,name="manages")
 ]

@@ -1,8 +1,9 @@
-from .models import Batch, Course, CustomUser, Instructor
+from .models import Batch, Course, CustomUser, Instructor,Students
 from django.shortcuts import redirect, render,HttpResponse
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from .forms import AddStudentForm
+from .filters import InstructorFilter,StudentFilter
 
 # Create your views here.
 
@@ -18,9 +19,6 @@ def loginpage(request):
             messages.info(request,"wrong credentials")
 
     return render(request,'login.html')
-
-def registerStudent(request):
-    pass
 
 def registerInstructor(request):
     if request.method=="POST":
@@ -112,3 +110,15 @@ def addBatch(request):
 def logoutUser(request):
     logout(request)
     return redirect('loginpage')
+
+def manageInstructor(request):
+    ins=Instructor.objects.all()
+    myfilter=InstructorFilter(request.GET,queryset=ins)
+    ins=myfilter.qs
+    return render(request,"HOD/manage_instructor.html",{"instructors":ins,"myfilter":myfilter})
+
+def manageStudent(request):
+    stu=Students.objects.all()
+    myfilter=StudentFilter(request.GET,queryset=stu)
+    stu=myfilter.qs
+    return render(request,"HOD/manage_students.html",{"students":stu,"myfilter":myfilter})
