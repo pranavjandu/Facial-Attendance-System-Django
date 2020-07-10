@@ -1,8 +1,9 @@
 from django_filters.filterset import remote_queryset
 from .models import Batch, Course, CustomUser, Instructor,Students
-from django.shortcuts import redirect, render,HttpResponse
+from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
+from django.urls import reverse
 from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
 
 # Create your views here.
@@ -130,5 +131,30 @@ def manageBatch(request):
     return render(request,"HOD/manage_batch.html",{"batches":bat,"myfilter":myfilter})
 
 def editInstructor(request,ins_id):
+    if request.method=="POST":
+        instructor_id=request.POST.get("instructor_id")
+        first_name=request.POST.get("first_name")
+        last_name=request.POST.get("last_name")
+        email=request.POST.get("email")
+        username=request.POST.get("username")
+        password=request.POST.get("password")
+
+        #try:
+        user=CustomUser.objects.get(id=instructor_id)
+        user.first_name=first_name
+        user.last_name=last_name
+        user.email=email
+        user.username=username
+        user.set_password=password
+        user.save()
+
+        ins_model=Instructor.objects.get(user=instructor_id)
+        ins_model.name=first_name+" "+last_name
+        ins_model.save()
+        messages.success(request,"Successfully Edited Instructor")
+        return HttpResponseRedirect(reverse("editi",kwargs={"ins_id":instructor_id}))
+        '''except:
+            messages.error(request,"Failed to Edit Instructor")
+            return HttpResponseRedirect(reverse("editi",kwargs={"ins_id":instructor_id}))'''
     ins=Instructor.objects.get(user=ins_id)
     return render(request,"HOD/edit_instructor.html",{"instructor":ins})

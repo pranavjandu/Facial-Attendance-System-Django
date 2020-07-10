@@ -67,42 +67,57 @@ Edit Instructor
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
     <div class="row">
         <div class="col-md-12 ">
-            <div class="card">
+            <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Edit Instructor {{instructor.user.username}} Details</h3>
+                    <h3 class="card-title">Edit Instructor {{instructor.user.username}}</h3>
                 </div>
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-hover text-nowrap">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>User Name</th>
-                                <th>Email</th>
-                                <th>Last Login</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for instructor in instructors %}
-                            <tr>
-                                <td>{{ instructor.user.id }}</td>
-                                <td>{{ instructor.user.first_name }}</td>
-                                <td>{{ instructor.user.last_name }}</td>
-                                <td>{{ instructor.user.username }}</td>
-                                <td>{{ instructor.user.email }}</td>
-                                <td>{{ instructor.user.last_login }}</td>
-                                <td><a href="edit_instructor/{{ instructor.user.id }}" class="btn btn-warning">Edit</a>
-                                </td>
-                            </tr>
+                <form role="form" action="" method="POST">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group">
+                            {% if messages %}
+                            {% for message in messages %}
+                            {% if message.tags == 'error' %}
+                            <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                            {% endif %}
+                            {% if message.tags == 'success' %}
+                            <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                            {% endif %}
                             {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" name="first_name" value="{{instructor.user.first_name}}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" name="last_name" value="{{instructor.user.last_name}}"
+                                default=" ">
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" class="form-control" name="username" value="{{instructor.user.username}}" required>
+                            <input type="hidden" name="instructor_id" value="{{instructor.user.id}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email address</label>
+                            <input type="email" class="form-control" name="email" value="{{instructor.user.email}}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" name="password" value="{{instructor.user.password}}" required>
+                        </div>
+
+
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-block">Edit Instructor</button>
+                    </div>
+                </form>
             </div>
         </div>
-
     </div>
 </main>
 

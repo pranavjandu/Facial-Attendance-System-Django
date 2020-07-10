@@ -16,5 +16,5 @@ urlpatterns = [
     path('manages',views.manageStudent,name="manages"),
     path('managec',views.manageCourse,name="managec"),
     path('manageb',views.manageBatch,name="manageb"),
-    path('edit_instructor/<str:ins_id>',views.editInstructor)
+    path('edit_instructor/<str:ins_id>',views.editInstructor,name="editi")
 ]
