@@ -137,24 +137,23 @@ def editInstructor(request,ins_id):
         last_name=request.POST.get("last_name")
         email=request.POST.get("email")
         username=request.POST.get("username")
-        password=request.POST.get("password")
 
-        #try:
-        user=CustomUser.objects.get(id=instructor_id)
-        user.first_name=first_name
-        user.last_name=last_name
-        user.email=email
-        user.username=username
-        user.set_password=password
-        user.save()
+        try:
+            user=CustomUser.objects.get(id=instructor_id)
+            user.first_name=first_name
+            user.last_name=last_name
+            user.email=email
+            user.username=username
+            user.save()
+            
 
-        ins_model=Instructor.objects.get(user=instructor_id)
-        ins_model.name=first_name+" "+last_name
-        ins_model.save()
-        messages.success(request,"Successfully Edited Instructor")
-        return HttpResponseRedirect(reverse("editi",kwargs={"ins_id":instructor_id}))
-        '''except:
+            ins_model=Instructor.objects.get(user=instructor_id)
+            ins_model.name=first_name+" "+last_name
+            ins_model.save()
+            messages.success(request,"Successfully Edited Instructor")
+            return HttpResponseRedirect(reverse("editi",kwargs={"ins_id":instructor_id}))
+        except:
             messages.error(request,"Failed to Edit Instructor")
-            return HttpResponseRedirect(reverse("editi",kwargs={"ins_id":instructor_id}))'''
+            return HttpResponseRedirect(reverse("editi",kwargs={"ins_id":instructor_id}))
     ins=Instructor.objects.get(user=ins_id)
     return render(request,"HOD/edit_instructor.html",{"instructor":ins})
