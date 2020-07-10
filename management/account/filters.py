@@ -12,7 +12,7 @@ class StudentFilter(django_filters.FilterSet):
     name=CharFilter(field_name="name",lookup_expr='icontains')
     class Meta:
         model=Students
-        fields=["name",]
+        fields=["name","batch_id"] 
 
 class CourseFilter(django_filters.FilterSet):
     name=CharFilter(field_name="course_name",lookup_expr='icontains')
@@ -21,7 +21,7 @@ class CourseFilter(django_filters.FilterSet):
         fields=["course_name",]
         exclude=["course_name",]
 
-class BatchFilter(django_filters.FilterSet):
+class BatchFilter(django_filters.FilterSet): 
     name=CharFilter(field_name="batch_name",lookup_expr='icontains')
     class Meta:
         model=Batch

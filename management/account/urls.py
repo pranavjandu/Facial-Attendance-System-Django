@@ -15,5 +15,6 @@ urlpatterns = [
     path('managei',views.manageInstructor,name="managei"),
     path('manages',views.manageStudent,name="manages"),
     path('managec',views.manageCourse,name="managec"),
-    path('manageb',views.manageBatch,name="manageb")
+    path('manageb',views.manageBatch,name="manageb"),
+    path('edit_instructor/<str:ins_id>',views.editInstructor)
 ]

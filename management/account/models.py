@@ -50,7 +50,7 @@ class Students(models.Model):
     user=models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING,default=1)
     objects = models.Manager()
-    def __str__(self):
+    def __str__(self): 
         return self.name
 
 class Attendance(models.Model):

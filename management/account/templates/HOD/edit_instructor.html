@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Manage Instructor
+Edit Instructor
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -69,18 +69,7 @@ Manage Instructor
         <div class="col-md-12 ">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Instructor Details</h3>
-
-                    <div class="card-tools">
-                        <div class="input-group input-group-sm" style="width: auto;">
-                            <form method="GET">
-                                {{myfilter.form}}
-                                
-                                <button type="submit" class="btn btn-info">Search</button>
-                                </form>
-                            </form>
-                        </div>
-                    </div>
+                    <h3 class="card-title">Edit Instructor {{instructor.user.username}} Details</h3>
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
