@@ -157,3 +157,36 @@ def editInstructor(request,ins_id):
             return HttpResponseRedirect(reverse("editi",kwargs={"ins_id":instructor_id}))
     ins=Instructor.objects.get(user=ins_id)
     return render(request,"HOD/edit_instructor.html",{"instructor":ins})
+
+def editStudent(request,stu_id):
+    if request.method=="POST":
+        student_id=request.POST.get("student_id")
+        first_name=request.POST.get("first_name")
+        last_name=request.POST.get("last_name")
+        email=request.POST.get("email")
+        username=request.POST.get("username")
+        batch_id=request.POST.get("batch_id")
+
+        try:
+            user=CustomUser.objects.get(id=student_id)
+            user.first_name=first_name
+            user.last_name=last_name
+            user.email=email
+            user.username=username
+            user.save()
+                
+
+            stu_model=Students.objects.get(user=student_id)
+            stu_model.name=first_name+" "+last_name
+            batch_obj=Batch.objects.get(id=batch_id)
+            stu_model.batch_id=batch_obj
+            stu_model.save()
+            messages.success(request,"Successfully Edited Student")
+            return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
+        except:
+            messages.error(request,"Failed to Edit Student")
+            return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
+    stu=Students.objects.get(user=stu_id)
+    batch=Batch.objects.all()
+    return render(request,"HOD/edit_student.html",{"student":stu,"batches":batch})
+

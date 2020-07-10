@@ -1,0 +1,128 @@
+{% extends 'base.html'%}
+{% block title%}
+Edit Student
+{% endblock title %}
+
+{% block sidebarstuff %}
+
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'dashboard' %}">
+        <span data-feather="home"></span>
+        Dashboard <span class="sr-only">(current)</span>
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'addCourses' %}">
+        <span data-feather="file"></span>
+        Add Course
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'addBatch' %}">
+        <span data-feather="shopping-cart"></span>
+        Add Batch
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'addInstructor' %}">
+        <span data-feather="users"></span>
+        Add Instructor
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'addStudent' %}">
+        <span data-feather="bar-chart-2"></span>
+        Add Student
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'managei' %}">
+        <span data-feather="layers"></span>
+        Manage Instructor
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'manages' %}">
+        <span data-feather="layers"></span>
+        Manage Student
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'managec' %}">
+        <span data-feather="layers"></span>
+        Manage Course
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'manageb' %}">
+        <span data-feather="layers"></span>
+        Manage Batch
+    </a>
+</li>
+
+{% endblock sidebarstuff %}
+
+{% block maincontent %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="card card-primary mt-5">
+                <div class="card-header">
+                    <h3 class="card-title">Edit Student {{student.user.username}}</h3>
+                </div>
+                <form role="form" action="" method="POST">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group">
+                            {% if messages %}
+                            {% for message in messages %}
+                            {% if message.tags == 'error' %} 
+                            <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                            {% endif %}
+                            {% if message.tags == 'success' %}
+                            <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" class="form-control" name="first_name" value="{{student.user.first_name}}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" class="form-control" name="last_name" value="{{student.user.last_name}}" >
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" class="form-control" name="username" value="{{student.user.username}}" required>
+                            <input type="hidden" name="student_id" value="{{student.user.id}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email address</label>
+                            <input type="email" class="form-control" name="email" value="{{student.user.email}}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Batch</label>
+                            <select class="form-control" name="batch_id">
+                                {% for batch in batches %}
+                                <option value="{{ batch.id }}" {% if batch.id == student.batch_id.id %} selected {% endif %}> {{ batch.batch_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+                    </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-block">Edit Student</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+{% endblock maincontent %}
