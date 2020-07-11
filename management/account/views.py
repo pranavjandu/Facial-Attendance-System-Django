@@ -190,3 +190,21 @@ def editStudent(request,stu_id):
     batch=Batch.objects.all()
     return render(request,"HOD/edit_student.html",{"student":stu,"batches":batch})
 
+
+def editCourse(request,cou_id):
+    if request.method=="POST":
+        course_id=request.POST.get("course_id")
+        cou_name=request.POST.get("course_name")
+        try:
+            cou_obj=Course.objects.get(id=course_id)
+            cou_obj.course_name=cou_name
+            cou_obj.save()
+            messages.success(request,"Successfully Edited Course")
+            return HttpResponseRedirect(reverse("editc",kwargs={"cou_id":course_id}))
+        except:
+            messages.error(request,"Failed to Edit Course")
+            return HttpResponseRedirect(reverse("editc",kwargs={"cou_id":course_id}))
+            
+    cou=Course.objects.get(id=cou_id)
+    return render(request,"HOD/edit_course.html",{"course":cou})
+

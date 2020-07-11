@@ -17,5 +17,6 @@ urlpatterns = [
     path('managec',views.manageCourse,name="managec"),
     path('manageb',views.manageBatch,name="manageb"),
     path('edit_instructor/<str:ins_id>',views.editInstructor,name="editi"),
-    path('edit_student/<str:stu_id>',views.editStudent,name='edits')
+    path('edit_student/<str:stu_id>',views.editStudent,name='edits'),
+    path('edit_course/<str:cou_id>',views.editCourse,name='editc')
 ]
