@@ -5,6 +5,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
+
 class CustomUser(AbstractUser):
     user_type_data=((1,"Admin"),(2,"Instructor"),(3,"Students"))
     user_type=models.CharField(default=1,choices=user_type_data,max_length=10)
@@ -40,6 +41,9 @@ class Batch(models.Model):
     batch_name=models.CharField(max_length=255)
     course_id=models.ForeignKey(Course,on_delete=models.CASCADE,default=1)
     instructor_id=models.ForeignKey(Instructor,on_delete=models.CASCADE)
+    start_time=models.TimeField(null=True,blank=True)
+    end_time=models.TimeField(null=True,blank=True)
+    days = models.CharField(max_length=100)
     objects=models.Manager()
     def __str__(self):
         return self.batch_name

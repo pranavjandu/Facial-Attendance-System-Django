@@ -74,10 +74,19 @@ Manage Batch
                     <div class="card-tools">
                         <div class="input-group input-group-sm" style="width: auto;">
                             <form method="GET">
-                                {{myfilter.form}}
-                                
-                                <button type="submit" class="btn btn-info">Search</button>
-                                </form>
+                                <!--{{myfilter.form}}-->
+                                {% for field in myfilter.form %}
+                                <div class="form-group" style="padding: 10px; float:left;">
+                                    {{ field.errors }}
+                                    {{ field.label_tag }} {{ field }}
+                                    {% if field.help_text %}
+                                    <p class="help">{{ field.help_text|safe }}</p>
+                                    {% endif %}
+                                </div>
+                                {% endfor %}
+
+                                <button type="submit" class="btn btn-info" style="float:left;">Search</button>
+                            </form>
                             </form>
                         </div>
                     </div>
@@ -89,6 +98,8 @@ Manage Batch
                                 <th>Batch</th>
                                 <th>Course Name</th>
                                 <th>Instructor Assigned</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -98,6 +109,8 @@ Manage Batch
                                 <td>{{ batch.batch_name }}</td>
                                 <td>{{ batch.course_id }}</td>
                                 <td>{{ batch.instructor_id }}</td>
+                                <td>{{ batch.start_time }}</td>
+                                <td>{{ batch.end_time }}</td>
                                 <td><a href="/edit_batch/{{ batch.id }}" class="btn btn-warning">Edit</a>
                                 </td>
                             </tr>

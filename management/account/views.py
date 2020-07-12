@@ -85,12 +85,14 @@ def addBatch(request):
         batch_name=request.POST.get("batch_name")
         course=request.POST.get("course_id")
         instructor=request.POST.get("instructor_id")
+        starttime=request.POST.get("start_time")
+        endtime=request.POST.get("end_time")
         try:
             course_obj=Course.objects.get(id=course)
             name=course_obj.course_name
             name=batch_name+" "+name
             instructor_obj=Instructor.objects.get(id=instructor)
-            batch=Batch(batch_name=name,course_id=course_obj,instructor_id=instructor_obj)
+            batch=Batch(batch_name=name,course_id=course_obj,instructor_id=instructor_obj,start_time=starttime,end_time=endtime)
             batch.save()
             messages.success(request,"Batch "+batch_name+" successfully added! ")
             return redirect('addBatch')
@@ -220,6 +222,8 @@ def editBatch(request,bat_id):
         batchname=request.POST.get("batch_name")
         courseid=request.POST.get("course_id")
         instructorid=request.POST.get("instructor_id")
+        starttime=request.POST.get("start_time")
+        endtime=request.POST.get("end_time")
         try:
             batch_obj=Batch.objects.get(id=batchid)
             batch_obj.batch_name=batchname
@@ -227,6 +231,8 @@ def editBatch(request,bat_id):
             instructor_obj=Instructor.objects.get(id=instructorid)
             batch_obj.course_id=course_obj
             batch_obj.instructor_id=instructor_obj
+            batch_obj.start_time=starttime
+            batch_obj.end_time=endtime
             batch_obj.save()
             messages.success(request,"Successfully Edited Batch ")
             return HttpResponseRedirect(reverse("editb",kwargs={"bat_id":batchid}))
