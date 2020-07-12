@@ -1,4 +1,4 @@
-from django_filters.filterset import remote_queryset
+
 from .models import Batch, Course, CustomUser, Instructor,Students
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login,logout,authenticate
@@ -207,4 +207,35 @@ def editCourse(request,cou_id):
             
     cou=Course.objects.get(id=cou_id)
     return render(request,"HOD/edit_course.html",{"course":cou})
+
+
+def editBatch(request,bat_id):
+    ''' Passes batch id to templte HTML, renders it and handle details edit request. 
+
+        Keyword Arguments: 
+        bat_id -- Batch id of the batch that needs to be modified.
+    '''
+    if request.method=="POST":
+        batchid=request.POST.get("batch_id")
+        batchname=request.POST.get("batch_name")
+        courseid=request.POST.get("course_id")
+        instructorid=request.POST.get("instructor_id")
+        try:
+            batch_obj=Batch.objects.get(id=batchid)
+            batch_obj.batch_name=batchname
+            course_obj=Course.objects.get(id=courseid)
+            instructor_obj=Instructor.objects.get(id=instructorid)
+            batch_obj.course_id=course_obj
+            batch_obj.instructor_id=instructor_obj
+            batch_obj.save()
+            messages.success(request,"Successfully Edited Batch ")
+            return HttpResponseRedirect(reverse("editb",kwargs={"bat_id":batchid}))
+        except:
+            messages.error(request,"Failed to edit Batch ")
+            return HttpResponseRedirect(reverse("editb",kwargs={"bat_id":batchid}))
+    cou=Course.objects.all()
+    batch=Batch.objects.get(id=bat_id)
+    ins=Instructor.objects.all()
+    return render(request,"HOD/edit_batch.html",{"batch":batch,"instructors":ins,"courses":cou})
+
 
