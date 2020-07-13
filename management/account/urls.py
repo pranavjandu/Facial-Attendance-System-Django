@@ -20,4 +20,5 @@ urlpatterns = [
     path('edit_student/<str:stu_id>',views.editStudent,name='edits'),
     path('edit_course/<str:cou_id>',views.editCourse,name='editc'),
     path('edit_batch/<str:bat_id>',views.editBatch,name='editb'),
+    path('createdataset/<str:us_id>',views.registerFace,name='createdataset')
 ]

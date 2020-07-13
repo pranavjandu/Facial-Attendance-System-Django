@@ -7,6 +7,13 @@ from django.urls import reverse
 from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
 from json import dumps
 
+import os
+import dlib
+import cv2
+from imutils import face_utils,resize
+from imutils.video import VideoStream
+from imutils.face_utils import FaceAligner
+
 # Create your views here.
 
 def loginpage(request):
@@ -250,5 +257,69 @@ def editBatch(request,bat_id):
     ins=Instructor.objects.all()
     listofdays=batch.days
     return render(request,"HOD/edit_batch.html",{"batch":batch,"instructors":ins,"courses":cou,"listofdays":listofdays})
+
+
+def registerFace(request,us_id):
+    if request.method=="POST":
+        id = request.POST.get("userid")
+        try:
+            if(os.path.exists('face_data/dataset/{}/'.format(id))==False):
+                os.makedirs('face_data/dataset/{}/'.format(id))
+            directory='face_data/dataset/{}/'.format(id)
+
+            # Face detection by HOG face detector
+            detector = dlib.get_frontal_face_detector()
+            predictor = dlib.shape_predictor('face_data/shape_predictor_68_face_landmarks.dat') 
+            fa = FaceAligner(predictor , desiredFaceWidth = 96)
+            #video stream
+            videost = VideoStream(src=0).start()
+            
+            # counter to stop loop after 100 photos
+            datacounter = 0
+            while(True):
+                frame = videost.read()    #reading frame
+                frame = resize(frame ,width = 800)
+                gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #convert to grayscale
+                #this will detect image in frame
+                faces = detector(gray_frame,0)
+                #There can be multiple faces in above
+                for face in faces:
+                    if face is None:
+                        continue
+                    (x,y,w,h) = face_utils.rect_to_bb(face)
+                    face_aligned = fa.align(frame,gray_frame,face)
+                    # As the program captures an image, it is written to the folder dataset
+                    datacounter = datacounter+1
+                    cv2.imwrite(directory+'/'+str(datacounter)+'.jpg'	, face_aligned)
+                    face_aligned = resize(face_aligned ,width = 400)
+                    #for creating a rectangle on the face
+                    cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),1)
+                    # Before continuing to the next loop, I want to give it a little pause
+                    cv2.waitKey(10)
+
+                #for Showing the image in a window
+                cv2.imshow("Add Images",frame)
+                cv2.waitKey(2)
+                #For loop break condition for 50 photos
+                if(datacounter>49):
+                    break
+            
+            # stopping the videostream
+            videost.stop()
+            # destroy window
+            cv2.destroyAllWindows()
+            #To make faceTaken to True in database
+            user=CustomUser.objects.get(id=us_id)
+            stuid=user.students.id
+            stu_obj=Students.objects.get(id=stuid)
+            stu_obj.faceTaken=True
+            stu_obj.save()
+            messages.success(request,"Face data added successfully")
+            return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))
+        except:
+            messages.error(request,"Error occured while adding data")
+            return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))
+    return render(request,"HOD/createdataset.html",{"userid":us_id})
+
 
 

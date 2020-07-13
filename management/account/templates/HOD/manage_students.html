@@ -91,6 +91,7 @@ Manage Student
                                 <th>User Name</th>
                                 <th>Email</th>
                                 <th>Last Login</th>
+                                <th>Face Data Taken</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -102,7 +103,9 @@ Manage Student
                                 <td>{{ student.user.username }}</td>
                                 <td>{{ student.user.email }}</td>
                                 <td>{{ student.user.last_login }}</td>
+                                <td>{{ student.faceTaken }}</td>
                                 <td><a href="/edit_student/{{ student.user.id }}" class="btn btn-warning">Edit</a>
+                                    <a href="/createdataset/{{ student.user.id }}" class="btn btn-info">Add Face</a>
                                 </td>
                             </tr>
                             {% endfor %}

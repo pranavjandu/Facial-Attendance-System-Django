@@ -3,3 +3,5 @@
 **/static
 management/db.sqlite3
 extra/**
+**/migrations
+**/dataset
