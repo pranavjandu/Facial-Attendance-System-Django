@@ -26,5 +26,5 @@ class BatchFilter(django_filters.FilterSet):
     class Meta:
         model=Batch
         fields='__all__'
-        exclude=['batch_name',]
+        exclude=['batch_name','days']
     

@@ -115,6 +115,16 @@ Edit Batch
                             <label>End Time</label>
                             <input type="time" class="form-control" value="{{ batch.end_time }}" name="end_time" required>
                         </div>
+                        <div class="form-group"> 
+                            <label>Days</label><br/>
+                            <label class="checkbox-inline"><input type="checkbox" name="day" value="Mon" {% if "Mon" in listofdays %} checked {% endif %}> Monday</label>
+                            <label class="checkbox-inline ml-2"><input type="checkbox" name="day" value="Tue" {% if "Tue" in listofdays %} checked {% endif %}> Tuesday</label>
+                            <label class="checkbox-inline ml-2"><input type="checkbox" name="day" value="Wed" {% if "Wed" in listofdays %} checked {% endif %}> Wednesday</label>
+                            <label class="checkbox-inline ml-2"><input type="checkbox" name="day" value="Thu" {% if "Thu" in listofdays %} checked {% endif %}> Thursday</label>
+                            <label class="checkbox-inline ml-2"><input type="checkbox" name="day" value="Fri" {% if "Fri" in listofdays %} checked {% endif %}> Friday</label>
+                            <label class="checkbox-inline ml-2"><input type="checkbox" name="day" value="Sat" {% if "Sat" in listofdays %} checked {% endif %}> Saturday</label>
+                            <label class="checkbox-inline ml-2"><input type="checkbox" name="day" value="Sun" {% if "Sun" in listofdays %} checked {% endif %}> Sunday</label>
+                        </div>
                     </div>
 
 

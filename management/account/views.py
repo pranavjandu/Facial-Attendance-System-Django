@@ -5,6 +5,7 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from django.urls import reverse
 from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
+from json import dumps
 
 # Create your views here.
 
@@ -87,12 +88,14 @@ def addBatch(request):
         instructor=request.POST.get("instructor_id")
         starttime=request.POST.get("start_time")
         endtime=request.POST.get("end_time")
+        days=request.POST.getlist("day")
+        days=dumps(days)
         try:
             course_obj=Course.objects.get(id=course)
             name=course_obj.course_name
             name=batch_name+" "+name
             instructor_obj=Instructor.objects.get(id=instructor)
-            batch=Batch(batch_name=name,course_id=course_obj,instructor_id=instructor_obj,start_time=starttime,end_time=endtime)
+            batch=Batch(batch_name=name,course_id=course_obj,instructor_id=instructor_obj,start_time=starttime,end_time=endtime,days=days)
             batch.save()
             messages.success(request,"Batch "+batch_name+" successfully added! ")
             return redirect('addBatch')
@@ -217,13 +220,14 @@ def editBatch(request,bat_id):
         Keyword Arguments: 
         bat_id -- Batch id of the batch that needs to be modified.
     '''
-    if request.method=="POST":
+    if request.method=="POST":   # control comes here when submit button is pressed
         batchid=request.POST.get("batch_id")
         batchname=request.POST.get("batch_name")
         courseid=request.POST.get("course_id")
         instructorid=request.POST.get("instructor_id")
         starttime=request.POST.get("start_time")
         endtime=request.POST.get("end_time")
+        days=request.POST.getlist("day")
         try:
             batch_obj=Batch.objects.get(id=batchid)
             batch_obj.batch_name=batchname
@@ -233,6 +237,8 @@ def editBatch(request,bat_id):
             batch_obj.instructor_id=instructor_obj
             batch_obj.start_time=starttime
             batch_obj.end_time=endtime
+            days=dumps(days)
+            batch_obj.days=days
             batch_obj.save()
             messages.success(request,"Successfully Edited Batch ")
             return HttpResponseRedirect(reverse("editb",kwargs={"bat_id":batchid}))
@@ -242,6 +248,7 @@ def editBatch(request,bat_id):
     cou=Course.objects.all()
     batch=Batch.objects.get(id=bat_id)
     ins=Instructor.objects.all()
-    return render(request,"HOD/edit_batch.html",{"batch":batch,"instructors":ins,"courses":cou})
+    listofdays=batch.days
+    return render(request,"HOD/edit_batch.html",{"batch":batch,"instructors":ins,"courses":cou,"listofdays":listofdays})
 
 

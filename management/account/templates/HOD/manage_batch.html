@@ -100,6 +100,7 @@ Manage Batch
                                 <th>Instructor Assigned</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
+                                <th>Days</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -111,6 +112,7 @@ Manage Batch
                                 <td>{{ batch.instructor_id }}</td>
                                 <td>{{ batch.start_time }}</td>
                                 <td>{{ batch.end_time }}</td>
+                                <td>{{ batch.days}}</td>
                                 <td><a href="/edit_batch/{{ batch.id }}" class="btn btn-warning">Edit</a>
                                 </td>
                             </tr>
