@@ -53,6 +53,7 @@ class Students(models.Model):
     name=models.CharField(max_length=255,null=True,blank=True)
     user=models.OneToOneField(CustomUser,on_delete=models.CASCADE)
     batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING,default=1)
+    faceTaken=models.BooleanField(default=False) 
     objects = models.Manager()
     def __str__(self): 
         return self.name
