@@ -2,24 +2,28 @@
 
 
 from django.urls import path
-from . import views
+from . import views,adminviews,instructorviews,studentviews
 
 urlpatterns = [
     path('',views.loginpage,name="loginpage"),
-    path('adm',views.dash,name="dashboard"),
+    path('adm',adminviews.dash,name="dashboard"),
     path('logout',views.logoutUser,name="logout"),
-    path('addInstructor',views.registerInstructor,name="addInstructor"),
-    path('addCourse',views.addCourse,name="addCourses"),
-    path('addBatch',views.addBatch,name="addBatch"),
-    path('addStudent',views.registerStudent,name="addStudent"),
-    path('managei',views.manageInstructor,name="managei"),
-    path('manages',views.manageStudent,name="manages"),
-    path('managec',views.manageCourse,name="managec"),
-    path('manageb',views.manageBatch,name="manageb"),
-    path('edit_instructor/<str:ins_id>',views.editInstructor,name="editi"),
-    path('edit_student/<str:stu_id>',views.editStudent,name='edits'),
-    path('edit_course/<str:cou_id>',views.editCourse,name='editc'),
-    path('edit_batch/<str:bat_id>',views.editBatch,name='editb'),
-    path('createdataset/<str:us_id>',views.registerFace,name='createdataset'),
-    path('train',views.trainSet,name="train")
+    path('addInstructor',adminviews.registerInstructor,name="addInstructor"),
+    path('addCourse',adminviews.addCourse,name="addCourses"),
+    path('addBatch',adminviews.addBatch,name="addBatch"),
+    path('addStudent',adminviews.registerStudent,name="addStudent"),
+    path('managei',adminviews.manageInstructor,name="managei"),
+    path('manages',adminviews.manageStudent,name="manages"),
+    path('managec',adminviews.manageCourse,name="managec"),
+    path('manageb',adminviews.manageBatch,name="manageb"),
+    path('edit_instructor/<str:ins_id>',adminviews.editInstructor,name="editi"),
+    path('edit_student/<str:stu_id>',adminviews.editStudent,name='edits'),
+    path('edit_course/<str:cou_id>',adminviews.editCourse,name='editc'),
+    path('edit_batch/<str:bat_id>',adminviews.editBatch,name='editb'),
+    path('createdataset/<str:us_id>',adminviews.registerFace,name='createdataset'),
+    path('train',adminviews.trainSet,name="train"),
+    #student paths
+    path('studashboard',studentviews.studentDashboard,name="studashboard"),
+    #instructor paths
+    path('insdashboard',instructorviews.instructorDashboard,name="insdashboard"),
 ]
