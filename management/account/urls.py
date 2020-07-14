@@ -26,4 +26,6 @@ urlpatterns = [
     path('studashboard',studentviews.studentDashboard,name="studashboard"),
     #instructor paths
     path('insdashboard',instructorviews.instructorDashboard,name="insdashboard"),
+    path('insbatch',instructorviews.viewbatch,name="insbatch"),
+    path('check_students/<str:bat_id>',instructorviews.viewstudents,name="checkstudents")
 ]

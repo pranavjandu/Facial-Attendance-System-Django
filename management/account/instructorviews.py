@@ -4,7 +4,7 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from django.urls import reverse
 from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
-from json import dumps
+from json import dumps 
 
 import os
 import dlib
@@ -25,3 +25,14 @@ from sklearn.svm import SVC
 
 def instructorDashboard(request):
     return render(request,"Instructor/dashboard.html")
+
+def viewbatch(request):
+    user_obj=request.user
+    ins_id=user_obj.instructor.id
+    #Instructor.objects.get(id=user_obj.id)
+    #ins_id=ins_obj.id
+    batches=Batch.objects.filter(instructor_id=ins_id)
+    return render(request,"Instructor/batches.html",{"batches":batches})
+
+def viewstudents(request,bat_id):
+    pass
