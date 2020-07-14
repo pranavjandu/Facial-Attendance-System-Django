@@ -27,5 +27,6 @@ urlpatterns = [
     #instructor paths
     path('insdashboard',instructorviews.instructorDashboard,name="insdashboard"),
     path('insbatch',instructorviews.viewbatch,name="insbatch"),
-    path('check_students/<str:bat_id>',instructorviews.viewstudents,name="checkstudents")
+    path('check_students/<str:bat_id>',instructorviews.viewstudents,name="checkstudents"),
+    path('attendance/<str:bat_id>',instructorviews.attendance,name="takeattendance")
 ]

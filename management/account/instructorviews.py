@@ -27,12 +27,16 @@ def instructorDashboard(request):
     return render(request,"Instructor/dashboard.html")
 
 def viewbatch(request):
-    user_obj=request.user
-    ins_id=user_obj.instructor.id
-    #Instructor.objects.get(id=user_obj.id)
-    #ins_id=ins_obj.id
-    batches=Batch.objects.filter(instructor_id=ins_id)
+    user_obj=request.user  #getting the user object
+    ins_id=user_obj.instructor.id  #getting instructor from django user
+    batches=Batch.objects.filter(instructor_id=ins_id)  #filtering batches for instructor
     return render(request,"Instructor/batches.html",{"batches":batches})
 
 def viewstudents(request,bat_id):
-    pass
+    bat_obj=Batch.objects.get(id=bat_id)
+    students=Students.objects.filter(batch_id=bat_id)
+    return render(request,'Instructor/viewstu.html',{"students":students,"batch":bat_obj})
+
+def attendance(request,bat_id):
+    bat_obj=Batch.objects.get(id=bat_id)
+    return render(request,'Instructor/takeattendance.html',{"batch":bat_obj})

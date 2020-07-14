@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Batches
+Attendance
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -11,16 +11,15 @@ Batches
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'insbatch' %}">
+    <a class="nav-link" href="{% url 'insbatch' %}">
         Batches
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'takeattendance' %}">
+    <a class="nav-link active" href="{% url 'takeattendance' %}">
         Take Attendance
     </a>
 </li>
-
 {% endblock sidebarstuff %} 
 
 {% block maincontent %}
@@ -30,7 +29,7 @@ Batches
         <div class="col-md-12 ">
             <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Batch Details</h3>
+                    <h3 class="card-title">Take Attendance</h3>
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
@@ -52,7 +51,7 @@ Batches
                                 <td>{{ batch.start_time }}</td>
                                 <td>{{ batch.end_time }}</td>
                                 <td>{{ batch.days}}</td>
-                                <td><a href="/check_students/{{ batch.id }}" class="btn btn-info">See Students</a>
+                                <td><a href="/take_attendance/{{ batch.id }}" class="btn btn-info">Take Attendance</a>
                                 </td>
                             </tr>
                             {% endfor %}
