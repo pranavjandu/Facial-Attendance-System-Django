@@ -2,6 +2,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
+from django.contrib import admin
 
 
 class restrictionMiddleware(MiddlewareMixin):
@@ -11,12 +12,12 @@ class restrictionMiddleware(MiddlewareMixin):
         user=request.user
         if user.is_authenticated:
             if user.user_type == "1":
-                if modulename == "account.adminviews":
-                    pass
-                elif modulename == "account.views":
-                    pass
-                else:
+                if modulename=="account.instructorviews":
                     return redirect('dashboard')
+                elif modulename=="account.studentviews":
+                    return redirect('dashboard')
+                else:
+                    pass
             elif user.user_type == "2":
                 if modulename == "account.instructorviews":
                     pass
@@ -36,6 +37,8 @@ class restrictionMiddleware(MiddlewareMixin):
 
         else:
             if request.path == reverse("loginpage"):
+                pass
+            elif modulename=="django.contrib.admin.sites":
                 pass
             else:
                 return HttpResponseRedirect(reverse("loginpage"))
