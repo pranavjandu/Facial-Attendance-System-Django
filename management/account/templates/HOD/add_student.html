@@ -104,8 +104,8 @@ Add Student
                             <input type="password" class="form-control" placeholder="Password" name="password" required>
                         </div> 
                         <div class="form-group">
-                            <label>Batch</label>
-                            <select class="form-control" name="batch_id">
+                            <label>Batch (Press ctrl to select multiple)</label>
+                            <select class="form-control" name="batch_id" size="3" multiple required>
                                 {% for batch in batches %}
                                 <option value="{{ batch.id }}"> {{ batch.batch_name }}</option>
                                 {% endfor %}

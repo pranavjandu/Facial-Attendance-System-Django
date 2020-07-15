@@ -52,7 +52,8 @@ class Students(models.Model):
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=255,null=True,blank=True)
     user=models.OneToOneField(CustomUser,on_delete=models.CASCADE)
-    batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING,default=1)
+    batch_id=models.ManyToManyField(Batch,related_name="studentss")
+    batch_array=models.CharField(max_length=255)
     faceTaken=models.BooleanField(default=False) 
     objects = models.Manager()
     def __str__(self): 
@@ -111,7 +112,7 @@ def create_user_profile(sender,instance,created,**kwargs):
         if instance.user_type==2:
             Instructor.objects.create(user=instance)
         if instance.user_type==3:
-            Students.objects.create(user=instance,batch_id=Batch.objects.get(id=1))
+            Students.objects.create(user=instance)#batch_id=Batch.objects.get(id=1))
 
 @receiver(post_save,sender=CustomUser)
 def save_user_profile(sender,instance,**kwargs):

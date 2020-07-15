@@ -4,7 +4,7 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from django.urls import reverse
 from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
-from json import dumps
+from json import dumps,loads
 
 import os
 import dlib
@@ -12,7 +12,7 @@ import cv2
 from imutils import face_utils,resize
 from imutils.video import VideoStream
 from imutils.face_utils import FaceAligner
-
+import face_recognition
 from face_recognition import face_encodings
 from face_recognition.face_recognition_cli import image_files_in_folder
 import numpy as np
@@ -20,7 +20,9 @@ import pickle
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 
+from PIL import Image
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def dash(request):
@@ -55,13 +57,22 @@ def registerStudent(request):
         username=request.POST.get("username")
         email=request.POST.get("email")
         password=request.POST.get("password")
-        batch=request.POST.get("batch_id")
+        batch=request.POST.getlist("batch_id")
+        ba=[]
+        for b in batch:
+            batchh_obj=Batch.objects.get(id=b)
+            ba.append(batchh_obj.batch_name)
+        batch_arr=dumps(ba)
         try:
             user=CustomUser.objects.create_user(username=username,password=password,email=email,last_name=last_name,first_name=first_name,user_type=3)
             user.students.name=first_name+" "+last_name
-            batch_obj=Batch.objects.get(id=batch)
-            user.students.batch_id=batch_obj
             user.save()
+            stu_obj=Students.objects.get(user=user)
+            stu_obj.batch_array=batch_arr
+            stu_obj.save()
+            for bid in batch:
+                batch_obj=Batch.objects.get(id=bid)
+                stu_obj.batch_id.add(batch_obj)
             messages.success(request," Student added successfully ")
             return redirect('addStudent')
         except:
@@ -93,7 +104,6 @@ def addBatch(request):
         starttime=request.POST.get("start_time")
         endtime=request.POST.get("end_time")
         days=request.POST.getlist("day")
-        days=dumps(days)
         try:
             course_obj=Course.objects.get(id=course)
             name=course_obj.course_name
@@ -101,7 +111,14 @@ def addBatch(request):
             instructor_obj=Instructor.objects.get(id=instructor)
             batch=Batch(batch_name=name,course_id=course_obj,instructor_id=instructor_obj,start_time=starttime,end_time=endtime,days=days)
             batch.save()
+            bat_id=batch.id
+            directory=f'ImageData/{str(bat_id)}'
+            path=os.path.join(BASE_DIR,directory)
+            os.makedirs(path, exist_ok = True) 
             messages.success(request,"Batch "+batch_name+" successfully added! ")
+            return redirect('addBatch')
+        except OSError as error:
+            messages.error(request,error)
             return redirect('addBatch')
         except:
             messages.error(request,"Error occured ! Please Try again.")
@@ -171,7 +188,12 @@ def editStudent(request,stu_id):
         last_name=request.POST.get("last_name")
         email=request.POST.get("email")
         username=request.POST.get("username")
-        batch_id=request.POST.get("batch_id")
+        batch_id=request.POST.getlist("batch_id")
+        ba=[]
+        for b in batch_id:
+            batchh_obj=Batch.objects.get(id=b)
+            ba.append(batchh_obj.batch_name)
+        batch_arr=dumps(ba)
 
         try:
             user=CustomUser.objects.get(id=student_id)
@@ -184,8 +206,11 @@ def editStudent(request,stu_id):
 
             stu_model=Students.objects.get(user=student_id)
             stu_model.name=first_name+" "+last_name
-            batch_obj=Batch.objects.get(id=batch_id)
-            stu_model.batch_id=batch_obj
+            stu_model.batch_array=batch_arr
+            stu_model.save()
+            for bid in batch_id:
+                batch_obj=Batch.objects.get(id=bid)
+                stu_model.batch_id.add(batch_obj)
             stu_model.save()
             messages.success(request,"Successfully Edited Student")
             return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
@@ -194,7 +219,8 @@ def editStudent(request,stu_id):
             return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
     stu=Students.objects.get(user=stu_id)
     batch=Batch.objects.all()
-    return render(request,"HOD/edit_student.html",{"student":stu,"batches":batch})
+    listofbatch=loads(stu.batch_array)
+    return render(request,"HOD/edit_student.html",{"student":stu,"batches":batch,"listofbatch":listofbatch})
 
 
 def editCourse(request,cou_id):
@@ -253,7 +279,54 @@ def editBatch(request,bat_id):
     return render(request,"HOD/edit_batch.html",{"batch":batch,"instructors":ins,"courses":cou,"listofdays":listofdays})
 
 
+
 def registerFace(request,us_id):
+    pass
+    # if request.method=="POST":
+    #     id = request.POST.get("userid")
+    #     #try:
+    #     user=CustomUser.objects.get(id=id)
+    #     cap=cv2.VideoCapture(0)
+    #     success,img=cap.read()
+
+    #     img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    #     img=recognizeFace(img)
+    #     img, status = detection(img)
+    #     if status:
+    #             #change path here 
+    #         cv2.imwrite(os.path.join(BASE_DIR,'ImagesAttendance/') + user.username + '.jpg', img)
+    #         with open('users.csv', mode='a', newline='') as employee_file:
+    #             employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    #             employee_writer.writerow([user.id, user.username,user.students.batch_id,user.email])
+    #         doEncoding()
+    #     widthi = int(img.shape[1] * 60/100)
+    #     heighti = int(img.shape[0] * 70/100)
+    #     dim = (widthi, heighti)
+    #     img=cv2.resize(img,dim,interpolation=cv2.INTER_AREA)
+    #     height,width,channel=img.shape
+    #     step=channel*width
+    #     cv2.imshow("Image",img)
+    #     cv2.waitKey(100)
+    #     cap.release()
+    #     cv2.destroyAllWindows()
+    #     #To make faceTaken to True in database
+    #     user=CustomUser.objects.get(id=us_id)
+    #     stuid=user.students.id
+    #     stu_obj=Students.objects.get(id=stuid)
+    #     stu_obj.faceTaken=True
+    #     stu_obj.save()
+    #     messages.success(request,"Face data added successfully")
+    #     return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))
+    #     '''except:
+    #         messages.error(request,"Error occured while adding data")
+    #         return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))'''
+    # return render(request,"HOD/createdataset.html",{"userid":us_id})
+
+def trainSet(request):
+    pass
+
+
+'''def registerFace(request,us_id):
     if request.method=="POST":
         id = request.POST.get("userid")
         try:
@@ -364,3 +437,4 @@ def trainSet(request):
         return redirect('train')
     return render(request,"HOD/train.html")
 
+'''

@@ -101,9 +101,9 @@ Edit Student
                         </div>
                         <div class="form-group">
                             <label>Batch</label>
-                            <select class="form-control" name="batch_id">
+                            <select class="form-control" name="batch_id" multiple required>
                                 {% for batch in batches %}
-                                <option value="{{ batch.id }}" {% if batch.id == student.batch_id.id %} selected {% endif %}> {{ batch.batch_name }}</option>
+                                <option value="{{ batch.id }}" {% if batch.batch_name in listofbatch %} selected {% endif %}> {{ batch.batch_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>

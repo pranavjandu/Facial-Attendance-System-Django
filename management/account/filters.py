@@ -1,6 +1,7 @@
 import django_filters
 from django_filters import CharFilter
 from .models import *
+from django import forms
 
 class InstructorFilter(django_filters.FilterSet):
     name=CharFilter(field_name="name",lookup_expr='icontains')
@@ -10,6 +11,11 @@ class InstructorFilter(django_filters.FilterSet):
 
 class StudentFilter(django_filters.FilterSet):
     name=CharFilter(field_name="name",lookup_expr='icontains')
+    batch_id= django_filters.filters.ModelMultipleChoiceFilter(
+        field_name='batch_id',
+        queryset=Batch.objects.all(),
+        widget=forms.SelectMultiple(attrs={'size':'2'})
+    )
     class Meta:
         model=Students
         fields=["name","batch_id"] 
