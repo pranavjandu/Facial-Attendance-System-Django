@@ -342,6 +342,26 @@ def deleteCourse(request,cou_id):
     course=Course.objects.get(id=cou_id)
     return render(request,"HOD/delete_course.html",{"course":course})
 
+def deleteInstructor(request,ins_id):
+    if request.method=="POST":
+        instructorid=request.POST.get("instructorid")
+        try:
+            instructor=Instructor.objects.get(id=instructorid)
+            us=instructor.user.id
+            user=CustomUser.objects.get(id=us)
+            user.delete()
+            messages.success(request,"Instructor Deleted Successfully")
+            return redirect('managei')
+        except CustomUser.DoesNotExist:
+            messages.error(request,"Instructor Does not exist")
+            return redirect('managei')
+        except Exception as e:
+            messages.error(request,str(e))
+            return redirect('managei')
+    instructor=Instructor.objects.get(id=ins_id)
+    return render(request,"HOD/delete_instructor.html",{"instructor":instructor})
+
+
 def registerFace(request,us_id):
     if request.method=="POST":
         try:

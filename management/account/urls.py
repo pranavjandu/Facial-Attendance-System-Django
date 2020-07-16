@@ -23,6 +23,7 @@ urlpatterns = [
     path('createdataset/<str:us_id>',adminviews.registerFace,name='createdataset'),
     path('delete_batch/<str:bat_id>',adminviews.deleteBatch,name='deleteb'),
     path('delete_course/<str:cou_id>',adminviews.deleteCourse,name='deletec'),
+    path('delete_instructor/<str:ins_id>',adminviews.deleteInstructor,name='deletei'),
     #student paths
     path('studashboard',studentviews.studentDashboard,name="studashboard"),
     #instructor paths

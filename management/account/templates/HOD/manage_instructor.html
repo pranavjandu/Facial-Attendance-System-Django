@@ -74,11 +74,22 @@ Manage Instructor
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% if message.tags == 'success' %}
+                    <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div> 
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>ID</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>User Name</th>
@@ -90,13 +101,13 @@ Manage Instructor
                         <tbody>
                             {% for instructor in instructors %}
                             <tr>
-                                <td>{{ instructor.user.id }}</td>
                                 <td>{{ instructor.user.first_name }}</td>
                                 <td>{{ instructor.user.last_name }}</td>
                                 <td>{{ instructor.user.username }}</td>
                                 <td>{{ instructor.user.email }}</td>
                                 <td>{{ instructor.user.last_login }}</td>
                                 <td><a href="edit_instructor/{{ instructor.user.id }}" class="btn btn-warning">Edit</a>
+                                    <a href="/delete_instructor/{{ instructor.id }}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
                             {% endfor %}
