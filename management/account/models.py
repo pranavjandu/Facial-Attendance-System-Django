@@ -40,7 +40,7 @@ class Batch(models.Model):
     id=models.AutoField(primary_key=True)
     batch_name=models.CharField(max_length=255)
     course_id=models.ForeignKey(Course,on_delete=models.CASCADE,default=1)
-    instructor_id=models.ForeignKey(Instructor,on_delete=models.DO_NOTHING,null=True)
+    instructor_id=models.ForeignKey(Instructor,on_delete=models.SET_NULL,null=True)
     start_time=models.TimeField(null=True,blank=True)
     end_time=models.TimeField(null=True,blank=True)
     days = models.CharField(max_length=100)
