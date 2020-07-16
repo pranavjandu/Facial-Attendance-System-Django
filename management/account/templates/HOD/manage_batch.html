@@ -87,12 +87,24 @@ Manage Batch
                     </div>
                 </div>
                 <div class="card-body table-responsive p-0">
+                    <div class="form-group">
+                        {% if messages %}
+                        {% for message in messages %}
+                        {% if message.tags == 'error' %}
+                        <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                        {% endif %}
+                        {% if message.tags == 'success' %}
+                        <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                        {% endif %}
+                        {% endfor %}
+                        {% endif %}
+                    </div>
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
                                 <th>Batch</th>
                                 <th>Course Name</th>
-                                <th>Instructor Assigned</th>
+                                <th>Instructor Assigned</th> 
                                 <th>Start Time</th>
                                 <th>End Time</th>
                                 <th>Days</th>
@@ -109,6 +121,7 @@ Manage Batch
                                 <td>{{ batch.end_time }}</td>
                                 <td>{{ batch.days}}</td>
                                 <td><a href="/edit_batch/{{ batch.id }}" class="btn btn-warning">Edit</a>
+                                    <a href="/delete_batch/{{ batch.id }}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
                             {% endfor %}

@@ -22,9 +22,10 @@ from sklearn.svm import SVC
 
 from PIL import Image
 from.exceptions import MultipleFaceException
+import shutil
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+ 
 
 def dash(request):
     return render(request,'HOD/dashboard.html')
@@ -278,6 +279,41 @@ def editBatch(request,bat_id):
     ins=Instructor.objects.all()
     listofdays=batch.days
     return render(request,"HOD/edit_batch.html",{"batch":batch,"instructors":ins,"courses":cou,"listofdays":listofdays})
+
+
+def deleteBatch(request,bat_id):
+    if request.method=="POST":
+        batchid=request.POST.get("batchid")
+        #try:
+        batch_obj=Batch.objects.get(id=batchid)
+        name=batch_obj.batch_name
+        
+        stuarr=batch_obj.studentss.all()       #getting students in batch
+        stuarray=[]
+        for stu in stuarr:
+            stuarray.append(stu.id)
+        batch_obj.delete()
+        for stu_id in stuarray:
+            stu_obj=Students.objects.get(id=stu_id)
+            batcharray=stu_obj.batch_id.all()       #getting list of students batches
+            ba=[]
+            for b in batcharray:
+                ba.append(b.batch_name)
+            batch_arr=dumps(ba)
+
+            stu_obj.batch_array=batch_arr
+            stu_obj.save()
+        dir=os.path.join(BASE_DIR,"ImageData")
+        path=os.path.join(dir,str(bat_id))
+        shutil.rmtree(path)
+
+        messages.success(request,"Batch "+name+" deleted successfully")
+        return redirect('manageb')
+        # except:
+        #     messages.error(request,"Something went wrong! Could not delete batch")
+        #     return redirect('manageb')
+    batch=Batch.objects.get(id=bat_id)
+    return render(request,"HOD/delete_batch.html",{"batch":batch})
 
 
 

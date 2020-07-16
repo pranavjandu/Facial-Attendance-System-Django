@@ -21,6 +21,7 @@ urlpatterns = [
     path('edit_course/<str:cou_id>',adminviews.editCourse,name='editc'),
     path('edit_batch/<str:bat_id>',adminviews.editBatch,name='editb'),
     path('createdataset/<str:us_id>',adminviews.registerFace,name='createdataset'),
+    path('delete_batch/<str:bat_id>',adminviews.deleteBatch,name='deleteb'),
     path('train',adminviews.trainSet,name="train"),
     #student paths
     path('studashboard',studentviews.studentDashboard,name="studashboard"),
