@@ -21,6 +21,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 
 from PIL import Image
+from.exceptions import MultipleFaceException
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -281,7 +282,43 @@ def editBatch(request,bat_id):
 
 
 def registerFace(request,us_id):
-    pass
+    if request.method=="POST":
+        try:
+            userid=request.POST.get("userid")
+            user=CustomUser.objects.get(id=userid)
+            stu_obj=Students.objects.get(user=user)
+            batcharray=stu_obj.batch_id.all()       #getting list of students batches
+            ba=[]
+            for b in batcharray:
+                ba.append(b.id)
+            cap=cv2.VideoCapture(0)
+            while True:
+                success,img = cap.read()
+                imgSmall = cv2.resize(img, (0,0), None, 0.25, 0.25)
+                imgSmall=cv2.cvtColor(imgSmall,cv2.COLOR_BGR2RGB)
+
+                facesCurFrame = face_recognition.face_locations(imgSmall)    # getting faces in current frame
+                if len(facesCurFrame)>1 or len(facesCurFrame)==0:
+                    raise MultipleFaceException("Multiple faces or No face detected in the frame")
+                else:
+                    for c in ba:
+                        cv2.imwrite((os.path.join(BASE_DIR,"ImageData/"))+str(c)+"/"+str(stu_obj.id)+'.jpg',imgSmall)
+                    stu_obj.faceTaken=True
+                    stu_obj.save()
+                    messages.success(request,"Face added successfully")
+                    break
+            cv2.imshow("Image",img)
+            cv2.waitKey(0)
+            cap.release()
+            cv2.destroyAllWindows()
+            return render(request,"HOD/createdataset.html",{"userid":userid})
+        except MultipleFaceException as error:
+            messages.error(request,error)
+        except:
+            messages.error(request,"Something went wrong! Try Again")
+
+            
+    return render(request,"HOD/createdataset.html",{"userid":us_id})
     # if request.method=="POST":
     #     id = request.POST.get("userid")
     #     #try:
