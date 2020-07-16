@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Add face
+Delete Batch
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -46,11 +46,10 @@ Add face
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'manageb' %}">
+    <a class="nav-link active" href="{% url 'manageb' %}">
         Manage Batch
     </a>
 </li>
-
 
 {% endblock sidebarstuff %}
 
@@ -61,7 +60,7 @@ Add face
         <div class="col-sm-12">
             <div class="card card-primary mt-5">
                 <div class="card-header text-center">
-                    <h3 class="card-title">Add Facial Recognition Dataset</h3>
+                    <h3 class="card-title">Delete Batch {{batch.batch_name}} </h3>
                 </div>
                 <div class="card-body text-center">
                     <div class="form-group">
@@ -78,13 +77,11 @@ Add face
                     </div>
                     <form method="POST">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label class="card-text"><h4>Get the student in front of webcam and press Add Face</h4></label>
-                            <input type="hidden" name="userid" value="{{userid}}">
-                        </div>
+                        <input type="hidden" value="{{batch.id}}" name="batchid">
                         <br />
                         <div class="form-footer">
-                            <input type="submit" class="btn btn-primary" value="Add Face">
+                            <input type="submit" class="btn btn-primary" value="Delete">
+                            <a href="manageb" class="btn btn-danger">Cancel</a>
                         </div>
                     </form>
                 </div>

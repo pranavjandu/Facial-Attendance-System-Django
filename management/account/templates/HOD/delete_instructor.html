@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Train Dataset
+Delete Batch
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -46,13 +46,8 @@ Train Dataset
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'manageb' %}">
+    <a class="nav-link active" href="{% url 'manageb' %}">
         Manage Batch
-    </a>
-</li>
-<li class="nav-item">
-    <a class="nav-link active" href="{% url 'train' %}">
-        Train Face Dataset
     </a>
 </li>
 
@@ -65,7 +60,7 @@ Train Dataset
         <div class="col-sm-12">
             <div class="card card-primary mt-5">
                 <div class="card-header text-center">
-                    <h3 class="card-title">Train Facial Recognition Dataset</h3>
+                    <h3 class="card-title">Delete Batch</h3>
                 </div>
                 <div class="card-body text-center">
                     <div class="form-group">
@@ -82,10 +77,11 @@ Train Dataset
                     </div>
                     <form method="POST">
                         {% csrf_token %}
-                        <input type="hidden" value="train" name="t">
+                        <input type="hidden" value="{{batch.id}}" name="batchid">
                         <br />
                         <div class="form-footer">
-                            <input type="submit" class="btn btn-primary" value="Train">
+                            <input type="submit" class="btn btn-primary" value="Delete">
+                            <a href="{% url 'managec' %}" class="btn btn-danger"></a>
                         </div>
                     </form>
                 </div>

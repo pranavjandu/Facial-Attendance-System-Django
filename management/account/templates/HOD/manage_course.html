@@ -50,11 +50,7 @@ Manage Course
         Manage Batch
     </a>
 </li>
-<li class="nav-item">
-    <a class="nav-link" href="{% url 'train' %}">
-        Train Face Dataset
-    </a>
-</li>
+
 
 {% endblock sidebarstuff %}
 
@@ -78,6 +74,18 @@ Manage Course
                         </div>
                     </div>
                 </div>
+                <div class="form-group">
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% if message.tags == 'success' %}
+                    <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div> 
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
                         <thead>
@@ -91,6 +99,7 @@ Manage Course
                             <tr>
                                 <td>{{ course.course_name }}</td>
                                 <td><a href="/edit_course/{{ course.id }}" class="btn btn-warning">Edit</a>
+                                    <a href="/delete_course/{{ course.id }}" class="btn btn-danger">Delete</a>
                                 </td>
                             </tr>
                             {% endfor %}
