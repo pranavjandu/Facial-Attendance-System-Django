@@ -5,3 +5,4 @@ management/db.sqlite3
 extra/**
 **/migrations
 **/dataset
+**/ImageData
