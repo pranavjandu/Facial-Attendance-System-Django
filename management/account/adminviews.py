@@ -183,6 +183,7 @@ def editInstructor(request,ins_id):
     ins=Instructor.objects.get(user=ins_id)
     return render(request,"HOD/edit_instructor.html",{"instructor":ins})
 
+
 def editStudent(request,stu_id):
     if request.method=="POST":
         student_id=request.POST.get("student_id")
@@ -284,38 +285,62 @@ def editBatch(request,bat_id):
 def deleteBatch(request,bat_id):
     if request.method=="POST":
         batchid=request.POST.get("batchid")
-        #try:
-        batch_obj=Batch.objects.get(id=batchid)
-        name=batch_obj.batch_name
-        
-        stuarr=batch_obj.studentss.all()       #getting students in batch
-        stuarray=[]
-        for stu in stuarr:
-            stuarray.append(stu.id)
-        batch_obj.delete()
-        for stu_id in stuarray:
-            stu_obj=Students.objects.get(id=stu_id)
-            batcharray=stu_obj.batch_id.all()       #getting list of students batches
-            ba=[]
-            for b in batcharray:
-                ba.append(b.batch_name)
-            batch_arr=dumps(ba)
+        try:
+            batch_obj=Batch.objects.get(id=batchid)
+            name=batch_obj.batch_name
+            
+            stuarr=batch_obj.studentss.all()       #getting students in batch
+            stuarray=[]
+            for stu in stuarr:
+                stuarray.append(stu.id)
+            batch_obj.delete()
+            for stu_id in stuarray:
+                stu_obj=Students.objects.get(id=stu_id)
+                batcharray=stu_obj.batch_id.all()       #getting list of students batches
+                ba=[]
+                for b in batcharray:
+                    ba.append(b.batch_name)
+                batch_arr=dumps(ba)
 
-            stu_obj.batch_array=batch_arr
-            stu_obj.save()
-        dir=os.path.join(BASE_DIR,"ImageData")
-        path=os.path.join(dir,str(bat_id))
-        shutil.rmtree(path)
+                stu_obj.batch_array=batch_arr
+                stu_obj.save()
+            dir=os.path.join(BASE_DIR,"ImageData")
+            path=os.path.join(dir,str(bat_id))
+            shutil.rmtree(path)
 
-        messages.success(request,"Batch "+name+" deleted successfully")
-        return redirect('manageb')
-        # except:
-        #     messages.error(request,"Something went wrong! Could not delete batch")
-        #     return redirect('manageb')
+            messages.success(request,"Batch "+name+" deleted successfully")
+            return redirect('manageb')
+        except:
+            messages.error(request,"Something went wrong! Could not delete batch")
+            return redirect('manageb')
     batch=Batch.objects.get(id=bat_id)
     return render(request,"HOD/delete_batch.html",{"batch":batch})
 
+def studentBatchReset(student):
+    batches=student.batch_id.all()
+    ba=[]
+    for b in batches:
+        ba.append(b.batch_name)
+    batch_arr=dumps(ba)
+    student.batch_array=batch_arr
+    student.save()
 
+def deleteCourse(request,cou_id):
+    if request.method=="POST":
+        try:
+            courseid=request.POST.get("courseid")
+            course=Course.objects.get(id=courseid)
+            course.delete()
+            students=Students.objects.all()
+            for student in students:
+                studentBatchReset(student)
+            messages.success(request,"Course Deleted")
+            return redirect('managec')
+        except:
+            messages.error(request,"Something Went Wrong")
+            return redirect('managec')
+    course=Course.objects.get(id=cou_id)
+    return render(request,"HOD/delete_course.html",{"course":course})
 
 def registerFace(request,us_id):
     if request.method=="POST":
@@ -395,8 +420,6 @@ def registerFace(request,us_id):
     #         return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))'''
     # return render(request,"HOD/createdataset.html",{"userid":us_id})
 
-def trainSet(request):
-    pass
 
 
 '''def registerFace(request,us_id):
