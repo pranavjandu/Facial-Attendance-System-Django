@@ -183,8 +183,21 @@ def editInstructor(request,ins_id):
     ins=Instructor.objects.get(user=ins_id)
     return render(request,"HOD/edit_instructor.html",{"instructor":ins})
 
+def deleteFaceTemp(student_id):
+    
+    stu_obj=Students.objects.get(id=student_id)
+    if stu_obj.faceTaken==True:
 
-def editStudent(request,stu_id):
+        batcharray=stu_obj.batch_id.all()       #getting list of students batches
+        ba=[]
+        for b in batcharray:
+            ba.append(b.id)
+        for c in ba:
+            os.remove((os.path.join(BASE_DIR,"ImageData/"))+str(c)+"/"+str(student_id)+'.jpg')
+        stu_obj.faceTaken=False
+        stu_obj.save()
+
+def editStudent(request,us_id):
     if request.method=="POST":
         student_id=request.POST.get("student_id")
         first_name=request.POST.get("first_name")
@@ -198,29 +211,33 @@ def editStudent(request,stu_id):
             ba.append(batchh_obj.batch_name)
         batch_arr=dumps(ba)
 
-        try:
-            user=CustomUser.objects.get(id=student_id)
-            user.first_name=first_name
-            user.last_name=last_name
-            user.email=email
-            user.username=username
-            user.save()
-                
+        #try:
+        user=CustomUser.objects.get(id=us_id)
+        
+        user.first_name=first_name
+        user.last_name=last_name
+        user.email=email
+        user.username=username
+        user.save()
+            
 
-            stu_model=Students.objects.get(user=student_id)
-            stu_model.name=first_name+" "+last_name
-            stu_model.batch_array=batch_arr
-            stu_model.save()
-            for bid in batch_id:
-                batch_obj=Batch.objects.get(id=bid)
-                stu_model.batch_id.add(batch_obj)
-            stu_model.save()
-            messages.success(request,"Successfully Edited Student")
-            return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
-        except:
-            messages.error(request,"Failed to Edit Student")
-            return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
-    stu=Students.objects.get(user=stu_id)
+        stu_model=Students.objects.get(user=user)
+        stu_model.name=first_name+" "+last_name
+        deleteFaceTemp(student_id)
+        stu_model.batch_array=batch_arr
+        stu_model.batch_id.clear()
+        stu_model.save()
+        for bid in batch_id:
+            batch_obj=Batch.objects.get(id=bid)
+            stu_model.batch_id.add(batch_obj)
+        stu_model.save()
+        messages.success(request,"Successfully Edited Student")
+        return HttpResponseRedirect(reverse("edits",kwargs={"us_id":us_id}))
+        # except:
+        #     messages.error(request,"Failed to Edit Student")
+        #     return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
+    user=CustomUser.objects.get(id=us_id)
+    stu=Students.objects.get(user=user)
     batch=Batch.objects.all()
     listofbatch=loads(stu.batch_array)
     return render(request,"HOD/edit_student.html",{"student":stu,"batches":batch,"listofbatch":listofbatch})
@@ -404,8 +421,10 @@ def registerFace(request,us_id):
                 imgSmall=cv2.cvtColor(imgSmall,cv2.COLOR_BGR2RGB)
 
                 facesCurFrame = face_recognition.face_locations(imgSmall)    # getting faces in current frame
-                if len(facesCurFrame)>1 or len(facesCurFrame)==0:
+                if len(facesCurFrame)>1:
                     raise MultipleFaceException("Multiple faces or No face detected in the frame")
+                elif len(facesCurFrame)==0:
+                    raise MultipleFaceException("No face Detected")
                 else:
                     for c in ba:
                         cv2.imwrite((os.path.join(BASE_DIR,"ImageData/"))+str(c)+"/"+str(stu_obj.id)+'.jpg',imgSmall)
@@ -417,9 +436,13 @@ def registerFace(request,us_id):
             cv2.waitKey(0)
             cap.release()
             cv2.destroyAllWindows()
+
+
             return render(request,"HOD/createdataset.html",{"userid":userid})
         except MultipleFaceException as error:
             messages.error(request,error)
+            cap.release()
+            cv2.destroyAllWindows()
         except:
             messages.error(request,"Something went wrong! Try Again")
 
@@ -452,157 +475,4 @@ def deleteFace(request,us_id):
         return redirect('manages')
     else:
         return render(request,"HOD/delete_face.html",{"student":student})
-    # if request.method=="POST":
-    #     id = request.POST.get("userid")
-    #     #try:
-    #     user=CustomUser.objects.get(id=id)
-    #     cap=cv2.VideoCapture(0)
-    #     success,img=cap.read()
-
-    #     img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    #     img=recognizeFace(img)
-    #     img, status = detection(img)
-    #     if status:
-    #             #change path here 
-    #         cv2.imwrite(os.path.join(BASE_DIR,'ImagesAttendance/') + user.username + '.jpg', img)
-    #         with open('users.csv', mode='a', newline='') as employee_file:
-    #             employee_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-    #             employee_writer.writerow([user.id, user.username,user.students.batch_id,user.email])
-    #         doEncoding()
-    #     widthi = int(img.shape[1] * 60/100)
-    #     heighti = int(img.shape[0] * 70/100)
-    #     dim = (widthi, heighti)
-    #     img=cv2.resize(img,dim,interpolation=cv2.INTER_AREA)
-    #     height,width,channel=img.shape
-    #     step=channel*width
-    #     cv2.imshow("Image",img)
-    #     cv2.waitKey(100)
-    #     cap.release()
-    #     cv2.destroyAllWindows()
-    #     #To make faceTaken to True in database
-    #     user=CustomUser.objects.get(id=us_id)
-    #     stuid=user.students.id
-    #     stu_obj=Students.objects.get(id=stuid)
-    #     stu_obj.faceTaken=True
-    #     stu_obj.save()
-    #     messages.success(request,"Face data added successfully")
-    #     return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))
-    #     '''except:
-    #         messages.error(request,"Error occured while adding data")
-    #         return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))'''
-    # return render(request,"HOD/createdataset.html",{"userid":us_id})
-
-
-
-'''def registerFace(request,us_id):
-    if request.method=="POST":
-        id = request.POST.get("userid")
-        try:
-            if(os.path.exists('face_data/dataset/{}/'.format(id))==False):
-                os.makedirs('face_data/dataset/{}/'.format(id))
-            directory='face_data/dataset/{}/'.format(id)
-
-            # Face detection by HOG face detector
-            detector = dlib.get_frontal_face_detector()
-            predictor = dlib.shape_predictor('face_data/shape_predictor_68_face_landmarks.dat') 
-            fa = FaceAligner(predictor , desiredFaceWidth = 96)
-            #video stream
-            videost = VideoStream(src=0).start()
-            
-            # counter to stop loop after 100 photos
-            datacounter = 0
-            while(True):
-                frame = videost.read()    #reading frame
-                frame = resize(frame ,width = 800)
-                gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY) #convert to grayscale
-                #this will detect image in frame
-                faces = detector(gray_frame,0)
-                #There can be multiple faces in above
-                for face in faces:
-                    if face is None:
-                        continue
-                    (x,y,w,h) = face_utils.rect_to_bb(face)
-                    face_aligned = fa.align(frame,gray_frame,face)
-                    # As the program captures an image, it is written to the folder dataset
-                    datacounter = datacounter+1
-                    cv2.imwrite(directory+'/'+str(datacounter)+'.jpg'	, face_aligned)
-                    face_aligned = resize(face_aligned ,width = 400)
-                    #for creating a rectangle on the face
-                    cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),1)
-                    # Before continuing to the next loop, I want to give it a little pause
-                    cv2.waitKey(10)
-
-                #for Showing the image in a window
-                cv2.imshow("Add Images",frame)
-                cv2.waitKey(2)
-                #For loop break condition for 50 photos
-                if(datacounter>49):
-                    break
-            
-            # stopping the videostream
-            videost.stop()
-            # destroy window
-            cv2.destroyAllWindows()
-            #To make faceTaken to True in database
-            user=CustomUser.objects.get(id=us_id)
-            stuid=user.students.id
-            stu_obj=Students.objects.get(id=stuid)
-            stu_obj.faceTaken=True
-            stu_obj.save()
-            messages.success(request,"Face data added successfully")
-            return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))
-        except:
-            messages.error(request,"Error occured while adding data")
-            return HttpResponseRedirect(reverse("createdataset",kwargs={"us_id":id}))
-    return render(request,"HOD/createdataset.html",{"userid":us_id})
-
-
-
-def trainSet(request):
-    if request.method=="POST":
-        training_dir='face_data/dataset'
-        count=0
-        for student_id in os.listdir(training_dir):
-            curr_directory=os.path.join(training_dir,student_id)
-            if not os.path.isdir(curr_directory):
-                continue
-            for imagefile in image_files_in_folder(curr_directory):
-                count+=1
-
-        X=[]
-        y=[]
-        i=0
-
-        for student_id in os.listdir(training_dir):
-            print(str(student_id))
-            curr_directory=os.path.join(training_dir,student_id)
-            if not os.path.isdir(curr_directory):
-                continue
-            for imagefile in image_files_in_folder(curr_directory):
-                print(str(imagefile))
-                image=cv2.imread(imagefile)
-                try:
-                    X.append((face_encodings(image)[0]).tolist())
-                    y.append(student_id)
-                    i+=1
-                except:
-                    print("removed")
-                    os.remove(imagefile)
-
-        encoder = LabelEncoder()
-        encoder.fit(y)
-        y=encoder.transform(y)
-        X1=np.array(X)
-        print("shape: "+ str(X1.shape))
-        np.save('face_data/classes.npy', encoder.classes_)
-        svc = SVC(kernel='linear',probability=True)
-        svc.fit(X1,y)
-        svc_save_path="face_data/svc.sav"
-        with open(svc_save_path, 'wb') as f:
-            pickle.dump(svc,f)
-        
-        messages.success(request,'Training Complete.')
-        return redirect('train')
-    return render(request,"HOD/train.html")
-
-'''
+    
