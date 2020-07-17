@@ -361,6 +361,31 @@ def deleteInstructor(request,ins_id):
     instructor=Instructor.objects.get(id=ins_id)
     return render(request,"HOD/delete_instructor.html",{"instructor":instructor})
 
+def deleteStudent(request,stu_id):
+    if request.method=="POST":
+        studentid=request.POST.get("studentid")
+        try:
+            student=Students.objects.get(id=studentid)
+            batcharray=student.batch_id.all()       #getting list of students batches
+            if student.faceTaken == True:
+                ba=[]
+                for b in batcharray:
+                    ba.append(b.id)
+                for c in ba:
+                    os.remove((os.path.join(BASE_DIR,"ImageData/"))+str(c)+"/"+str(studentid)+'.jpg')
+            us=student.user.id
+            user=CustomUser.objects.get(id=us)
+            user.delete()
+            messages.success(request,"Student Deleted Successfully")
+            return redirect('manages')
+        except CustomUser.DoesNotExist:
+            messages.error(request,"Instructor Does not exist")
+            return redirect('manages')
+        except Exception as e:
+            messages.error(request,str(e))
+            return redirect('manages')
+    student=Students.objects.get(id=stu_id)
+    return render(request,"HOD/delete_student.html",{"student":student})
 
 def registerFace(request,us_id):
     if request.method=="POST":
@@ -400,6 +425,33 @@ def registerFace(request,us_id):
 
             
     return render(request,"HOD/createdataset.html",{"userid":us_id})
+
+
+def deleteFace(request,us_id):
+    if request.method=="POST":
+        try:
+            studentid=request.POST.get("studentid")
+            stu_obj=Students.objects.get(id=studentid)
+            batcharray=stu_obj.batch_id.all()       #getting list of students batches
+            ba=[]
+            for b in batcharray:
+                ba.append(b.id)
+            for c in ba:
+                os.remove((os.path.join(BASE_DIR,"ImageData/"))+str(c)+"/"+str(studentid)+'.jpg')
+            stu_obj.faceTaken=False
+            stu_obj.save()
+            messages.success(request,"Face Data Removed")
+            return redirect('manages')
+        except:
+            messages.error(request,"Something Went Wrong")
+            return redirect('manages')
+    us=CustomUser.objects.get(id=us_id)
+    student=Students.objects.get(user=us)
+    if student.faceTaken==False:
+        messages.error(request,"Face Data Not added in the first place")
+        return redirect('manages')
+    else:
+        return render(request,"HOD/delete_face.html",{"student":student})
     # if request.method=="POST":
     #     id = request.POST.get("userid")
     #     #try:

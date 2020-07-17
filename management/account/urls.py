@@ -24,6 +24,8 @@ urlpatterns = [
     path('delete_batch/<str:bat_id>',adminviews.deleteBatch,name='deleteb'),
     path('delete_course/<str:cou_id>',adminviews.deleteCourse,name='deletec'),
     path('delete_instructor/<str:ins_id>',adminviews.deleteInstructor,name='deletei'),
+    path('delete_student/<str:stu_id>',adminviews.deleteStudent,name="deletes"),
+    path('delete_face/<str:us_id>',adminviews.deleteFace,name="deletef"),
     #student paths
     path('studashboard',studentviews.studentDashboard,name="studashboard"),
     #instructor paths

@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Delete Student
+Delete face
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -36,10 +36,10 @@ Delete Student
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'manages' %}">
+    <a class="nav-link" href="{% url 'manages' %}">
         Manage Student
     </a>
-</li> 
+</li>
 <li class="nav-item">
     <a class="nav-link" href="{% url 'managec' %}">
         Manage Course
@@ -51,6 +51,7 @@ Delete Student
     </a>
 </li>
 
+
 {% endblock sidebarstuff %}
 
 {% block maincontent %}
@@ -60,7 +61,7 @@ Delete Student
         <div class="col-sm-12">
             <div class="card card-primary mt-5">
                 <div class="card-header text-center">
-                    <h3 class="card-title">Delete Student</h3>
+                    <h3 class="card-title">Delete Facial Recognition Dataset</h3>
                 </div>
                 <div class="card-body text-center">
                     <div class="form-group">
@@ -77,11 +78,14 @@ Delete Student
                     </div>
                     <form method="POST">
                         {% csrf_token %}
-                        <input type="hidden" value="{{student.id}}" name="studentid">
+                        <div class="form-group">
+                            <label class="card-text"><h4>Are you sure you want to delete the face data of student {{ student.name }}</h4></label>
+                            <input type="hidden" name="studentid" value="{{student.id}}">
+                        </div>
                         <br />
                         <div class="form-footer">
-                            <input type="submit" class="btn btn-primary" value="Delete">
-                            <a href="{% url 'manages' %}" class="btn btn-danger">Cancel</a>
+                            <input type="submit" class="btn btn-primary" value="Delete Face">
+                            <a href="{% url 'manages' %}" class="btn btn-danger" >Cancel</a>
                         </div>
                     </form>
                 </div>
