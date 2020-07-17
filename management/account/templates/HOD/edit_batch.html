@@ -101,11 +101,11 @@ Edit Batch
                         </div>
                         <div class="form-group">
                             <label>Start Time</label>
-                            <input type="time" class="form-control" value="{{batch.start_time}}" name="start_time" required>
+                            <input type="time" class="form-control" value="{{batch.start_time|time:'H:i'}}" name="start_time" required>
                         </div>
                         <div class="form-group">
                             <label>End Time</label>
-                            <input type="time" class="form-control" value="{{ batch.end_time }}" name="end_time" required>
+                            <input type="time" class="form-control" value="{{ batch.end_time|time:'H:i' }}" name="end_time" required>
                         </div>
                         <div class="form-group"> 
                             <label>Days</label><br/>
