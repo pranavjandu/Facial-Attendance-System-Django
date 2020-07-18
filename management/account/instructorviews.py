@@ -1,6 +1,7 @@
 
+from os import execlp
 import face_recognition
-from .models import Attendance, AttendanceReport, Batch, Course, CustomUser, Instructor,Students
+from .models import Attendance, AttendanceReport, Batch, Course, CustomUser, Instructor, Notification,Students
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
@@ -181,3 +182,41 @@ def attStudents(request,att_id,bat_id):
             sa.append(Students.objects.get(id=x))
     
     return render(request,"Instructor/attstudents.html",{"students":students,"att":att,"studentabsent":sa})
+
+
+def sendNotification(request,stu_id):
+    if request.method=="POST":
+        try:
+            text=request.POST.get("messtext")
+            stuid=request.POST.get("stuid")
+            user=request.user
+            instructor=Instructor.objects.get(user=user)
+            student=Students.objects.get(id=stuid)
+            ruser=student.user
+            Notification.objects.create(sendN=instructor,recieveN=ruser,msg_content=text)
+            messages.success(request,"Notification Sent successfully")
+            return redirect('insdashboard')
+        except:
+            messages.error(request,"Something went wrong")
+            return redirect('insdashboard')
+    student=Students.objects.get(id=stu_id)
+    return render(request,'Instructor/sendnotif.html',{"student":student})
+    
+
+def sendNotification2(request,att_id,stu_id):
+    if request.method=="POST":
+        try:
+            text=request.POST.get("messtext")
+            stuid=request.POST.get("stuid")
+            user=request.user
+            instructor=Instructor.objects.get(user=user)
+            student=Students.objects.get(id=stuid)
+            ruser=student.user
+            Notification.objects.create(sendN=instructor,recieveN=ruser,msg_content=text)
+            messages.success(request,"Notification Sent successfully")
+            return redirect('insdashboard')
+        except:
+            messages.error(request,"Something went wrong")
+            return redirect('insdashboard')
+    student=Students.objects.get(id=stu_id)
+    return render(request,'Instructor/sendnotif.html',{"student":student})

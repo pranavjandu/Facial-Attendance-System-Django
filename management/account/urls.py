@@ -40,4 +40,6 @@ urlpatterns = [
     path('viewAttendance/<str:bat_id>',instructorviews.viewAttendance,name="viewatt"),
     path('viewAttendance/delete_att/<str:att_id>',instructorviews.deleteatt),
     path('viewAttendance/att_students/<str:att_id>/<str:bat_id>',instructorviews.attStudents),
+    path('check_students/send_notification/<str:stu_id>',instructorviews.sendNotification),
+    path('viewAttendance/att_students/<str:att_id>/send_notification/<str:stu_id>',instructorviews.sendNotification2)
 ]

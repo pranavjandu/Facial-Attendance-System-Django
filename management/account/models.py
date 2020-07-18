@@ -86,21 +86,13 @@ class MarkReport(models.Model):
     objects=models.Manager()
 
 
-class NotificationStudent(models.Model):
-    id = models.AutoField(primary_key=True)
-    student_id = models.ForeignKey(Students, on_delete=models.CASCADE)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
-
-
-class NotificationInstructor(models.Model):
-    id = models.AutoField(primary_key=True)
-    instructor_id = models.ForeignKey(Instructor, on_delete=models.CASCADE)
-    message = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    objects = models.Manager()
+class Notification(models.Model):
+    id=models.AutoField(primary_key=True)
+    sendN = models.ForeignKey(Instructor,on_delete=models.CASCADE,related_name="senders")
+    recieveN = models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name="recievers")
+    msg_content = models.TextField()
+    created_at = models.TimeField(auto_now_add=True)
+    objects=models.Manager()
 
 
 
@@ -112,7 +104,7 @@ def create_user_profile(sender,instance,created,**kwargs):
         if instance.user_type==2:
             Instructor.objects.create(user=instance)
         if instance.user_type==3:
-            Students.objects.create(user=instance)#batch_id=Batch.objects.get(id=1))
+            Students.objects.create(user=instance)
 
 @receiver(post_save,sender=CustomUser)
 def save_user_profile(sender,instance,**kwargs):

@@ -1,4 +1,4 @@
-from .models import Batch, Course, CustomUser, Instructor,Students
+from .models import Batch, Course, CustomUser, Instructor, Notification,Students
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
@@ -21,4 +21,16 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 
 def studentDashboard(request):
-    return render(request,"Student/dashboard.html")
+    if request.method=="POST":
+        try:
+            x=request.POST.get("delete")
+            notifics=Notification.objects.filter(recieveN=request.user)
+            for n in notifics:
+                n.delete()
+            messages.success(request,"Successfully Cleared")
+            return redirect('studashboard')
+        except:
+            messages.error(request,"Something went wrong")
+            return redirect('studashboard')
+    notifics=Notification.objects.filter(recieveN=request.user)
+    return render(request,"Student/dashboard.html",{"notification":notifics})

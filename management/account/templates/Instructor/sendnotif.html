@@ -1,16 +1,20 @@
 {% extends 'base.html'%}
 {% block title%}
-Student Dashboard
+Message
 {% endblock title %}
 
 {% block sidebarstuff %}
                         
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'studashboard' %}">
+    <a class="nav-link" href="{% url 'insdashboard' %}">
         Dashboard
     </a>
 </li>
-
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'insbatch' %}">
+        Batches
+    </a>
+</li>
 {% endblock sidebarstuff %} 
 
 {% block maincontent %}
@@ -20,7 +24,7 @@ Student Dashboard
         <div class="col-sm-12">
             <div class="card card-primary mt-5">
                 <div class="card-header text-center">
-                    <h3 class="card-title">Notifications</h3>
+                    <h3 class="card-title">Send Notification to {{ student.name }}</h3>
                 </div>
                 <div class="card-body text-center">
                     <div class="form-group">
@@ -35,24 +39,17 @@ Student Dashboard
                         {% endfor %}
                         {% endif %}
                     </div>
-                    <div>
-                        {% for notif in notification %}
-                        <div class="alert alert-primary" role="alert">
-                            <h4 class="alert-heading">Notification!</h4>
-                            <p>{{ notif.msg_content }}</p>
-                            <hr>
-                            <p class="mb-0">From Instructor {{notif.sendN.name}} at {{notif.created_at|time:'H:i'}}</p>
-                        </div>
-                        {% endfor %}
-                    </div>
                     <form method="POST">
                         {% csrf_token %}
                         <div class="form-group">
-                            <input type="hidden" name="delete" value="delete">
+                            <label class="card-text"><h4>Write the message below</h4></label><br/>
+                            <textarea name="messtext" rows="5" cols="80" placeholder="Enter Message here"></textarea>
+                            <input type="hidden" value="{{ student.id }}" name="stuid">
                         </div>
                         <br />
                         <div class="form-footer">
-                            <input type="submit" class="btn btn-danger" value="Clear Notifications">
+                            <input type="submit" class="btn btn-success" value="Send">
+                            <a href="{% url 'insdashboard' %}" class="btn btn-primary">Cancel</a>
                         </div>
                     </form>
                 </div>

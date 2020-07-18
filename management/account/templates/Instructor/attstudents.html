@@ -31,21 +31,17 @@ Students
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Name</th>
-                                <th>User Name</th>
-                                <th>Email</th>
-                                <th>Last Login</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for student in students %}
                             <tr>
+                                <td>{{ student.id }}</td>
                                 <td>{{ student.name }}</td>
-                                <td>{{ student.user.username }}</td>
-                                <td>{{ student.user.email }}</td>
-                                <td>{{ student.user.last_login }}</td>
-                                <td><a href="" class="btn btn-warning">Send Notification</a>
+                                <td><a href="send_notification/{{ student.id }}" class="btn btn-warning">Send Notification</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -76,7 +72,7 @@ Students
                             <tr>
                                 <td>{{ stude.id }}</td>
                                 <td>{{ stude.name }}</td>
-                                <td><a href="" class="btn btn-warning">Send Notification</a>
+                                <td><a href="send_notification/{{ stude.id }}" class="btn btn-warning">Send Notification</a>
                                 </td>
                             </tr>
                             {% endfor %}
