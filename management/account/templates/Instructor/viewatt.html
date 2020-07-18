@@ -25,7 +25,7 @@ Attendance List
         <div class="col-md-12 ">
             <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Students in Batch {{ batch.batch_id}}</h3>
+                    <h3 class="card-title">Attendance of Batch {{ batch.batch_name}}</h3>
                 </div>
                 <div class="card-body table-responsive p-0">
                     <table class="table table-hover text-nowrap">
@@ -41,7 +41,7 @@ Attendance List
                             <tr>
                                 <td>{{ att.id }}</td>
                                 <td>{{ att.attendance_date|date:"M d, Y" }}</td>
-                                <td><a href="" class="btn btn-warning">View Attendance</a>
+                                <td><a href="att_students/{{att.id}}/{{ batch.id }}" class="btn btn-warning">View Attendance</a>
                                     <a href="delete_att/{{ att.id }}" class="btn btn-danger">Delete Attendance</a>
                                 </td>
                             </tr>

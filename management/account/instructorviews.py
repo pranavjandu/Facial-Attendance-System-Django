@@ -146,7 +146,7 @@ def attendance(request,bat_id):
 def viewAttendance(request,bat_id):
     batch=Batch.objects.get(id=bat_id)
     att=Attendance.objects.filter(subject_id=batch)
-    return render(request,'Instructor/viewatt.html',{"atts":att})
+    return render(request,'Instructor/viewatt.html',{"atts":att,"batch":batch})
 
 def deleteatt(request,att_id):
     if request.method=="POST":
@@ -163,3 +163,21 @@ def deleteatt(request,att_id):
     att=Attendance.objects.get(id=att_id)
     return render(request,'Instructor/deleteattendance.html',{"att":att})
     
+def attStudents(request,att_id,bat_id):
+    batch=Batch.objects.get(id=bat_id)
+    studentssss=batch.studentss.all()
+    ba=[]     #total students in batch
+    for stu in studentssss:
+        ba.append(stu.id)
+    sa=[]   #  students absent
+    att=Attendance.objects.get(id=att_id)
+    attrep=AttendanceReport.objects.get(attendance_id=att)
+    students=attrep.student_id.all()
+    sp=[]   # students present
+    for s in students:
+        sp.append(s.id)
+    for x in ba:
+        if x not in sp:
+            sa.append(Students.objects.get(id=x))
+    
+    return render(request,"Instructor/attstudents.html",{"students":students,"att":att,"studentabsent":sa})

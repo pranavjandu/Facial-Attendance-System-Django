@@ -1,0 +1,97 @@
+{% extends 'base.html'%}
+{% block title%}
+Students
+{% endblock title %}
+
+{% block sidebarstuff %}
+                        
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'insdashboard' %}">
+        Dashboard
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'insbatch' %}">
+        Batches
+    </a>
+</li>
+
+{% endblock sidebarstuff %} 
+
+{% block maincontent %}
+
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="card card-primary mt-5">
+                <div class="card-header">
+                    <h3 class="card-title">Students Present on {{ att.attendance_date|date:"M d, Y"}}</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Last Login</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.user.username }}</td>
+                                <td>{{ student.user.email }}</td>
+                                <td>{{ student.user.last_login }}</td>
+                                <td><a href="" class="btn btn-warning">Send Notification</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12 ">
+            <div class="card card-primary mt-5">
+                <div class="card-header">
+                    <h3 class="card-title">Students Absent on {{ att.attendance_date|date:"M d, Y"}}</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Last Login</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stude in studentabsent %}
+                            <tr>
+                                <td>{{ stude.name }}</td>
+                                <td>{{ stude.user.username }}</td>
+                                <td>{{ stude.user.email }}</td>
+                                <td>{{ stude.user.last_login }}</td>
+                                <td><a href="" class="btn btn-warning">Send Notification</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+
+{% endblock maincontent %}

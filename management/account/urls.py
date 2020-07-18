@@ -38,5 +38,6 @@ urlpatterns = [
     path('check_students/<str:bat_id>',instructorviews.viewstudents,name="checkstudents"),
     path('attendance/<str:bat_id>',instructorviews.attendance,name="takeattendance"),
     path('viewAttendance/<str:bat_id>',instructorviews.viewAttendance,name="viewatt"),
-    path('viewAttendance/delete_att/<str:att_id>',instructorviews.deleteatt)
+    path('viewAttendance/delete_att/<str:att_id>',instructorviews.deleteatt),
+    path('viewAttendance/att_students/<str:att_id>/<str:bat_id>',instructorviews.attStudents),
 ]
