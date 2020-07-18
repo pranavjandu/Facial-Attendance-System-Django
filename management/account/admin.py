@@ -1,4 +1,4 @@
-from .models import Admin, Batch, Course, Instructor, Students, CustomUser
+from .models import Admin, Attendance, AttendanceReport, Batch, Course, Instructor, Mark, MarkReport, Students, CustomUser
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 # Register your models here.
@@ -13,3 +13,7 @@ admin.site.register(Admin)
 admin.site.register(Students)
 admin.site.register(Course)
 admin.site.register(Batch)
+admin.site.register(Attendance)
+admin.site.register(AttendanceReport)
+admin.site.register(Mark)
+admin.site.register(MarkReport)
