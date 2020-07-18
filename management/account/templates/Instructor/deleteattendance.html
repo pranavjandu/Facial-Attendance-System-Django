@@ -24,7 +24,7 @@ Attendance
         <div class="col-sm-12">
             <div class="card card-primary mt-5">
                 <div class="card-header text-center">
-                    <h3 class="card-title">Take Attendance for Batch {{ batch.batch_name }}</h3>
+                    <h3 class="card-title">Delete Attendance for {{ att.attendance_date|date:"M d, Y" }}</h3>
                 </div>
                 <div class="card-body text-center">
                     <div class="form-group">
@@ -42,14 +42,13 @@ Attendance
                     <form method="POST">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="card-text"><h4>Get the student in front of webcam and press Take Attendance</h4></label><br/>
-                            <label class="card-text"><h6>Press s key on the keyboard to stop attendance</h6></label>
-                            <input type="hidden" name="batchid" value="{{batch.id}}">
+                            <label class="card-text"><h4>Are you sure to delete attendance record ?</h4></label>
+                            <input type="hidden" name="attid" value="{{att.id}}">
                         </div>
                         <br />
                         <div class="form-footer">
-                            <input type="submit" class="btn btn-success" value="Take Attendance">
-                            <a href="{% url 'insbatch' %}" class="btn btn-danger">Cancel</a>
+                            <input type="submit" class="btn btn-danger" value="Delete">
+                            <a href="{% url 'insbatch' %}" class="btn btn-primary">Cancel</a>
                         </div>
                     </form>
                 </div>

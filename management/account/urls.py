@@ -17,7 +17,7 @@ urlpatterns = [
     path('managec',adminviews.manageCourse,name="managec"),
     path('manageb',adminviews.manageBatch,name="manageb"),
     path('edit_instructor/<str:ins_id>',adminviews.editInstructor,name="editi"),
-    path('edit_student/<str:stu_id>',adminviews.editStudent,name='edits'),
+    path('edit_student/<str:us_id>',adminviews.editStudent,name='edits'),
     path('edit_course/<str:cou_id>',adminviews.editCourse,name='editc'),
     path('edit_batch/<str:bat_id>',adminviews.editBatch,name='editb'),
     path('createdataset/<str:us_id>',adminviews.registerFace,name='createdataset'),
@@ -26,11 +26,17 @@ urlpatterns = [
     path('delete_instructor/<str:ins_id>',adminviews.deleteInstructor,name='deletei'),
     path('delete_student/<str:stu_id>',adminviews.deleteStudent,name="deletes"),
     path('delete_face/<str:us_id>',adminviews.deleteFace,name="deletef"),
+
+
     #student paths
     path('studashboard',studentviews.studentDashboard,name="studashboard"),
+
+
     #instructor paths
     path('insdashboard',instructorviews.instructorDashboard,name="insdashboard"),
     path('insbatch',instructorviews.viewbatch,name="insbatch"),
     path('check_students/<str:bat_id>',instructorviews.viewstudents,name="checkstudents"),
-    path('attendance/<str:bat_id>',instructorviews.attendance,name="takeattendance")
+    path('attendance/<str:bat_id>',instructorviews.attendance,name="takeattendance"),
+    path('viewAttendance/<str:bat_id>',instructorviews.viewAttendance,name="viewatt"),
+    path('viewAttendance/delete_att/<str:att_id>',instructorviews.deleteatt)
 ]

@@ -67,7 +67,7 @@ class Attendance(models.Model):
 
 class AttendanceReport(models.Model):
     id=models.AutoField(primary_key=True)
-    student_id=models.ForeignKey(Students,on_delete=models.DO_NOTHING)
+    student_id=models.ManyToManyField(Students,related_name="attendancereports")
     attendance_id=models.ForeignKey(Attendance,on_delete=models.CASCADE)
     status=models.BooleanField(default=False)
     objects=models.Manager()

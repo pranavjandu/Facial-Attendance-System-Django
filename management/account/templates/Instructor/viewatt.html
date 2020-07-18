@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Students List
+Attendance List
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -31,21 +31,18 @@ Students List
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>User Name</th>
-                                <th>Email</th>
-                                <th>Last Login</th>
+                                <th>ID</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for student in students %}
+                            {% for att in atts %}
                             <tr>
-                                <td>{{ student.name }}</td>
-                                <td>{{ student.user.username }}</td>
-                                <td>{{ student.user.email }}</td>
-                                <td>{{ student.user.last_login }}</td>
-                                <td><a href="" class="btn btn-warning">Send Notification</a>
+                                <td>{{ att.id }}</td>
+                                <td>{{ att.attendance_date|date:"M d, Y" }}</td>
+                                <td><a href="" class="btn btn-warning">View Attendance</a>
+                                    <a href="delete_att/{{ att.id }}" class="btn btn-danger">Delete Attendance</a>
                                 </td>
                             </tr>
                             {% endfor %}
