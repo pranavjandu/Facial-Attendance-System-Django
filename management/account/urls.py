@@ -1,5 +1,4 @@
 
-
 from django.urls import path
 from . import views,adminviews,instructorviews,studentviews
 
@@ -29,6 +28,7 @@ urlpatterns = [
 
     #student paths
     path('studashboard',studentviews.studentDashboard,name="studashboard"),
+    path('stucourses',studentviews.stuCourses,name="stucourses"),
 
 
     #instructor paths

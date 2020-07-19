@@ -34,3 +34,9 @@ def studentDashboard(request):
             return redirect('studashboard')
     notifics=Notification.objects.filter(recieveN=request.user)
     return render(request,"Student/dashboard.html",{"notification":notifics})
+
+
+def stuCourses(request):
+    student=Students.objects.get(user=request.user)
+    batches=student.batch_id.all()
+    return render(request,"Student/batches.html",{"batches":batches})
