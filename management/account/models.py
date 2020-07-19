@@ -75,14 +75,14 @@ class AttendanceReport(models.Model):
 class Mark(models.Model):
     id=models.AutoField(primary_key=True)
     batch_id=models.ForeignKey(Batch,on_delete=models.DO_NOTHING,default=1)
-    test_date=models.DateField(auto_now_add=True)
+    test_date=models.DateField(auto_now_add=True,blank=True)
     objects = models.Manager()
 
 class MarkReport(models.Model):
     id=models.AutoField(primary_key=True)
     student_id=models.ForeignKey(Students,on_delete=models.DO_NOTHING)
     mark_id=models.ForeignKey(Mark,on_delete=models.CASCADE)
-    mark=models.IntegerField()
+    mark=models.IntegerField(default=0)
     objects=models.Manager()
 
 

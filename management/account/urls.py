@@ -41,5 +41,9 @@ urlpatterns = [
     path('viewAttendance/delete_att/<str:att_id>',instructorviews.deleteatt),
     path('viewAttendance/att_students/<str:att_id>/<str:bat_id>',instructorviews.attStudents),
     path('check_students/send_notification/<str:stu_id>',instructorviews.sendNotification),
-    path('viewAttendance/att_students/<str:att_id>/send_notification/<str:stu_id>',instructorviews.sendNotification2)
+    path('viewAttendance/att_students/<str:att_id>/send_notification/<str:stu_id>',instructorviews.sendNotification2),
+    path('marks',instructorviews.marks,name="insmarks"),
+    path('add_marks/<str:bat_id>',instructorviews.addMarks,name="addmarks"),
+    path('edit_marks/<str:bat_id>',instructorviews.editMarks),
+    path('add_marks/put_marks/<str:stu_id>/<str:mark_id>',instructorviews.putMarks)
 ]

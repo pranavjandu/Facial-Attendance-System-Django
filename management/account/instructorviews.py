@@ -1,7 +1,7 @@
 
 from os import execlp
 import face_recognition
-from .models import Attendance, AttendanceReport, Batch, Course, CustomUser, Instructor, Notification,Students
+from .models import Attendance, AttendanceReport, Batch, Course, CustomUser, Instructor, Notification,Students,Mark,MarkReport
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
@@ -220,3 +220,43 @@ def sendNotification2(request,att_id,stu_id):
             return redirect('insdashboard')
     student=Students.objects.get(id=stu_id)
     return render(request,'Instructor/sendnotif.html',{"student":student})
+
+def marks(request):
+    user_obj=request.user  #getting the user object
+    ins_id=user_obj.instructor.id  #getting instructor from django user
+    batches=Batch.objects.filter(instructor_id=ins_id)  #filtering batches for instructor
+    return render(request,"Instructor/marks.html",{"batches":batches})  #rendering template
+
+
+def addMarks(request,bat_id):
+    batch=Batch.objects.get(id=bat_id)
+    mark,success=Mark.objects.get_or_create(batch_id=batch,test_date=datetime.date.today())
+    students=Students.objects.filter(batch_id=batch)    #getting all students in that batch
+    return render(request,"Instructor/addmarks.html",{"students":students,"mark":mark})
+    
+
+def putMarks(request,stu_id,mark_id):
+    if request.method=="POST":
+        m=request.POST.get("mark")     #getting how many marks student got
+        mark=Mark.objects.get(id=mark_id)
+        student=Students.objects.get(id=stu_id)
+        try:
+            rep,success=MarkReport.objects.get_or_create(student_id=student,mark_id=mark)
+            if success==True:
+                rep.mark=m
+                rep.save()
+                messages.success(request,"Marks added")
+            else:
+                rep.mark=m
+                rep.save()
+                messages.success(request,"Marks edited")
+            return HttpResponseRedirect(reverse("addmarks",kwargs={"bat_id":mark.batch_id.id}))
+        except:
+            messages.error(request,"Something went wrong")
+            return HttpResponseRedirect(reverse("addmarks",kwargs={"bat_id":mark.batch_id.id}))
+    student=Students.objects.get(id=stu_id)
+    return render(request,'Instructor/putmarks.html',{"student":student})
+    
+
+def editMarks(request,bat_id):
+    pass
