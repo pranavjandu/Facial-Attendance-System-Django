@@ -1,4 +1,4 @@
-from .models import Batch, Course, CustomUser, Instructor, Notification,Students
+from .models import Attendance, Batch, Course, CustomUser, Instructor, Notification,Students
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
@@ -40,3 +40,22 @@ def stuCourses(request):
     student=Students.objects.get(user=request.user)
     batches=student.batch_id.all()
     return render(request,"Student/batches.html",{"batches":batches})
+
+def seeAttendance(request,bat_id):
+    batch=Batch.objects.get(id=bat_id)
+    atten=Attendance.objects.filter(subject_id=batch)
+    user=request.user
+    student=Students.objects.get(user=user)
+    attreps=student.attendancereports.all()
+    attendanceObjects=[]     #getting attendance objects for days present 
+    for attrep in attreps:
+        atten=attrep.attendance_id
+        if atten.subject_id==batch:
+            attendanceObjects.append(atten)
+    return render(request,"Student/seeatten.html",{"attendances":attendanceObjects,"batch":batch})
+
+
+
+
+def seeMarks(request,bat_id):
+    pass

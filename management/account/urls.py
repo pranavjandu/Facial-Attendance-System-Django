@@ -29,6 +29,8 @@ urlpatterns = [
     #student paths
     path('studashboard',studentviews.studentDashboard,name="studashboard"),
     path('stucourses',studentviews.stuCourses,name="stucourses"),
+    path('see_atten/<str:bat_id>',studentviews.seeAttendance),
+    path('see_marks/<str:bat_id>',studentviews.seeMarks),
 
 
     #instructor paths

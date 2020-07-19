@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Student Batches
+Student Attendance
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -26,7 +26,7 @@ Student Batches
         <div class="col-md-12 ">
             <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Batch Details</h3>
+                    <h3 class="card-title">Dates you were present on in batch {{batch.batch_name}}</h3>
                 </div>
                 <div class="form-group">
                     {% if messages %}
@@ -44,25 +44,13 @@ Student Batches
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Batch</th>
-                                <th>Course Name</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Days</th>
-                                <th>Action</th>
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for batch in batches %}
+                            {% for att in attendances %}
                             <tr>
-                                <td>{{ batch.batch_name }}</td>
-                                <td>{{ batch.course_id }}</td>
-                                <td>{{ batch.start_time }}</td>
-                                <td>{{ batch.end_time }}</td>
-                                <td>{{ batch.days}}</td>
-                                <td><a href="see_atten/{{ batch.id }}" class="btn btn-info">See Attendance</a>
-                                    <a href="see_marks/{{ batch.id }}" class="btn btn-warning">See Marks</a>
-                                </td>
+                                <td>{{ att.attendance_date|date:'M d, Y' }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
