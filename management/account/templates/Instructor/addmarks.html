@@ -48,15 +48,17 @@ Marks
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
+                                <th>Marks</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for student in students %}
                             <tr>
-                                <td>{{ student.id }}</td>
-                                <td>{{ student.name }}</td>
-                                <td><a href="put_marks/{{ student.id }}/{{ mark.id }}" class="btn btn-primary">Enter Marks</a>
+                                <td>{{ student.0.id }}</td>
+                                <td>{{ student.0.name }}</td>
+                                <td>{{ student.1.mark }}</td>
+                                <td><a href="put_marks/{{ student.0.id }}/{{ mark.id }}" class="btn btn-primary">Enter Marks</a>
                                 </td>
                             </tr>
                             {% endfor %}

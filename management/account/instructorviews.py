@@ -1,6 +1,7 @@
 
 from os import execlp
 import face_recognition
+from numpy.core.getlimits import MachArLike
 from .models import Attendance, AttendanceReport, Batch, Course, CustomUser, Instructor, Notification,Students,Mark,MarkReport
 from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login,logout,authenticate
@@ -228,11 +229,16 @@ def marks(request):
     return render(request,"Instructor/marks.html",{"batches":batches})  #rendering template
 
 
-def addMarks(request,bat_id):
+def addMarks(request,bat_id):    #showing list of stuents
     batch=Batch.objects.get(id=bat_id)
     mark,success=Mark.objects.get_or_create(batch_id=batch,test_date=datetime.date.today())
     students=Students.objects.filter(batch_id=batch)    #getting all students in that batch
-    return render(request,"Instructor/addmarks.html",{"students":students,"mark":mark})
+    markss=[]
+    for st in students:
+        rep,success=MarkReport.objects.get_or_create(student_id=st,mark_id=mark)
+        markss.append(rep)
+    zippedlist=zip(students,markss)   # This is done as we cannot loop through two loop simultaneously in django template
+    return render(request,"Instructor/addmarks.html",{"students":zippedlist,"mark":mark})
     
 
 def putMarks(request,stu_id,mark_id):

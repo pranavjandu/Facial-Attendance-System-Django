@@ -80,7 +80,7 @@ class Mark(models.Model):
 
 class MarkReport(models.Model):
     id=models.AutoField(primary_key=True)
-    student_id=models.ForeignKey(Students,on_delete=models.DO_NOTHING)
+    student_id=models.ForeignKey(Students,on_delete=models.DO_NOTHING,related_name="markrep")
     mark_id=models.ForeignKey(Mark,on_delete=models.CASCADE)
     mark=models.IntegerField(default=0)
     objects=models.Manager()
