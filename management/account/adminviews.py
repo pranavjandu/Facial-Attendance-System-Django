@@ -10,24 +10,31 @@ import cv2
 import face_recognition
 from.exceptions import MultipleFaceException
 import shutil
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
  
-
 def dash(request):
+    '''
+    Nothing on dashboard
+    Blank for future purposes
+    '''
     return render(request,'HOD/dashboard.html')
 
 
  
 def registerInstructor(request):
+    '''
+    For adding a new instructor 
+    '''
     if request.method=="POST":
         first_name=request.POST.get("first_name")
         last_name=request.POST.get("last_name")
         username=request.POST.get("username")
         email=request.POST.get("email")
         password=request.POST.get("password")
-        try:
+        try:   #creating CustomUser object
             user=CustomUser.objects.create_user(username=username,password=password,email=email,first_name=first_name,last_name=last_name,user_type=2)
-            user.instructor.name=first_name+" "+last_name
+            user.instructor.name=first_name+" "+last_name #adding name to instructor object
             user.save()
             messages.success(request," Instructor added successfully ")
             return redirect('addInstructor')
@@ -38,6 +45,9 @@ def registerInstructor(request):
 
 
 def registerStudent(request):
+    '''
+    for adding a new student
+    '''
     
     if request.method=="POST":
         first_name=request.POST.get("first_name")
@@ -45,22 +55,22 @@ def registerStudent(request):
         username=request.POST.get("username")
         email=request.POST.get("email")
         password=request.POST.get("password")
-        batch=request.POST.getlist("batch_id")
+        batch=request.POST.getlist("batch_id") #getting an array of batches selected in html template
         ba=[]
-        for b in batch:
+        for b in batch:   #looping through the array
             batchh_obj=Batch.objects.get(id=b)
-            ba.append(batchh_obj.batch_name)
-        batch_arr=dumps(ba)
+            ba.append(batchh_obj.batch_name)    #adding batch name to array for converting to string
+        batch_arr=dumps(ba) #converting the array to json.dump string
         try:
             user=CustomUser.objects.create_user(username=username,password=password,email=email,last_name=last_name,first_name=first_name,user_type=3)
             user.students.name=first_name+" "+last_name
-            user.save()
+            user.save()  #created user object and saving as student object
             stu_obj=Students.objects.get(user=user)
-            stu_obj.batch_array=batch_arr
+            stu_obj.batch_array=batch_arr   #saving the dump as string
             stu_obj.save()
             for bid in batch:
                 batch_obj=Batch.objects.get(id=bid)
-                stu_obj.batch_id.add(batch_obj)
+                stu_obj.batch_id.add(batch_obj)     #addition of manyToManyField
             messages.success(request," Student added successfully ")
             return redirect('addStudent')
         except:
@@ -71,10 +81,13 @@ def registerStudent(request):
 
 
 def addCourse(request):
+    '''
+    for adding a new course
+    '''
     if request.method=="POST":
         course_name=request.POST.get("course_name")
         try:
-            course=Course(course_name=course_name)
+            course=Course(course_name=course_name) #creating course object
             course.save()
             messages.success(request,"Course "+course_name+" successfully added! ")
             return redirect('addCourses')
@@ -85,6 +98,9 @@ def addCourse(request):
 
 
 def addBatch(request):
+    '''
+    for addition of a new batch
+    '''
     if request.method=="POST":
         batch_name=request.POST.get("batch_name")
         course=request.POST.get("course_id")
@@ -100,12 +116,12 @@ def addBatch(request):
             batch=Batch(batch_name=name,course_id=course_obj,instructor_id=instructor_obj,start_time=starttime,end_time=endtime,days=days)
             batch.save()
             bat_id=batch.id
-            directory=f'ImageData/{str(bat_id)}'
+            directory=f'ImageData/{str(bat_id)}'  #for saving students images of this batch
             path=os.path.join(BASE_DIR,directory)
-            os.makedirs(path, exist_ok = True) 
+            os.makedirs(path, exist_ok = True)   #creating a folder by batch ID
             messages.success(request,"Batch "+batch_name+" successfully added! ")
             return redirect('addBatch')
-        except OSError as error:
+        except OSError as error:    #handling exceptions
             messages.error(request,error)
             return redirect('addBatch')
         except:
@@ -118,30 +134,53 @@ def addBatch(request):
 
 
 def manageInstructor(request):
+    '''
+    lists the instructors so that admin can manage instructor
+
+    also lets admin filter out the query
+    '''
     ins=Instructor.objects.all()
     myfilter=InstructorFilter(request.GET,queryset=ins)
     ins=myfilter.qs
     return render(request,"HOD/manage_instructor.html",{"instructors":ins,"myfilter":myfilter})
 
-def manageStudent(request):
+def manageStudent(request):  
+    '''
+    lists the students so that admin can manage them and edit details
+
+    also lets admin filter out the query
+    '''
     stu=Students.objects.all()
     myfilter=StudentFilter(request.GET,queryset=stu)
     stu=myfilter.qs
     return render(request,"HOD/manage_students.html",{"students":stu,"myfilter":myfilter})
 
-def manageCourse(request):
+def manageCourse(request):    
+    '''
+    lists the courses so that admin can manage and edit
+
+    also lets admin filter out the query
+    '''
     cou=Course.objects.all()
     myfilter=CourseFilter(request.GET,queryset=cou)
     cou=myfilter.qs
     return render(request,"HOD/manage_course.html",{"courses":cou,"myfilter":myfilter})
 
-def manageBatch(request):
+def manageBatch(request): 
+    '''
+    lists the batches so that admin can manage
+
+    also lets admin filter out the query
+    '''
     bat=Batch.objects.all()
     myfilter=BatchFilter(request.GET,queryset=bat)
     bat=myfilter.qs
     return render(request,"HOD/manage_batch.html",{"batches":bat,"myfilter":myfilter})
 
 def editInstructor(request,ins_id):
+    '''
+    handles the editing of instructor objects
+    '''
     if request.method=="POST":
         instructor_id=request.POST.get("instructor_id")
         first_name=request.POST.get("first_name")
@@ -170,7 +209,9 @@ def editInstructor(request,ins_id):
     return render(request,"HOD/edit_instructor.html",{"instructor":ins})
 
 def deleteFaceTemp(student_id):
-    
+    '''
+    for deleting the student images after edit in students objects
+    '''
     stu_obj=Students.objects.get(id=student_id)
     if stu_obj.faceTaken==True:
 
@@ -184,6 +225,9 @@ def deleteFaceTemp(student_id):
         stu_obj.save()
 
 def editStudent(request,us_id):
+    '''
+    handles all the edits made in student object
+    '''
     if request.method=="POST":
         student_id=request.POST.get("student_id")
         first_name=request.POST.get("first_name")
@@ -192,36 +236,36 @@ def editStudent(request,us_id):
         username=request.POST.get("username")
         batch_id=request.POST.getlist("batch_id")
         ba=[]
-        for b in batch_id:
+        for b in batch_id:    #looping through all the batches student is enrolled in
             batchh_obj=Batch.objects.get(id=b)
             ba.append(batchh_obj.batch_name)
-        batch_arr=dumps(ba)
+        batch_arr=dumps(ba)    #saving all the batches list as an string using json library
 
-        #try:
-        user=CustomUser.objects.get(id=us_id)
-        
-        user.first_name=first_name
-        user.last_name=last_name
-        user.email=email
-        user.username=username
-        user.save()
+        try:
+            user=CustomUser.objects.get(id=us_id)
             
+            user.first_name=first_name
+            user.last_name=last_name
+            user.email=email
+            user.username=username
+            user.save()
+                
 
-        stu_model=Students.objects.get(user=user)
-        stu_model.name=first_name+" "+last_name
-        deleteFaceTemp(student_id)
-        stu_model.batch_array=batch_arr
-        stu_model.batch_id.clear()
-        stu_model.save()
-        for bid in batch_id:
-            batch_obj=Batch.objects.get(id=bid)
-            stu_model.batch_id.add(batch_obj)
-        stu_model.save()
-        messages.success(request,"Successfully Edited Student")
-        return HttpResponseRedirect(reverse("edits",kwargs={"us_id":us_id}))
-        # except:
-        #     messages.error(request,"Failed to Edit Student")
-        #     return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
+            stu_model=Students.objects.get(user=user)
+            stu_model.name=first_name+" "+last_name
+            deleteFaceTemp(student_id)       #deleting the face data of student in each edit as batch details could have been changed IMP
+            stu_model.batch_array=batch_arr    #saving the string of batches list
+            stu_model.batch_id.clear()
+            stu_model.save()
+            for bid in batch_id:
+                batch_obj=Batch.objects.get(id=bid)
+                stu_model.batch_id.add(batch_obj)
+            stu_model.save()
+            messages.success(request,"Successfully Edited Student")
+            return HttpResponseRedirect(reverse("edits",kwargs={"us_id":us_id}))
+        except:
+            messages.error(request,"Failed to Edit Student")
+            return HttpResponseRedirect(reverse("edits",kwargs={"stu_id":student_id}))
     user=CustomUser.objects.get(id=us_id)
     stu=Students.objects.get(user=user)
     batch=Batch.objects.all()
@@ -230,6 +274,9 @@ def editStudent(request,us_id):
 
 
 def editCourse(request,cou_id):
+    '''
+    handles edit in details of course object by course ID
+    '''
     if request.method=="POST":
         course_id=request.POST.get("course_id")
         cou_name=request.POST.get("course_name")
@@ -270,7 +317,7 @@ def editBatch(request,bat_id):
             batch_obj.instructor_id=instructor_obj
             batch_obj.start_time=starttime
             batch_obj.end_time=endtime
-            days=dumps(days)
+            days=dumps(days)   #json.dumps to convert to string
             batch_obj.days=days
             batch_obj.save()
             messages.success(request,"Successfully Edited Batch ")
@@ -286,6 +333,9 @@ def editBatch(request,bat_id):
 
 
 def deleteBatch(request,bat_id):
+    '''
+    deletes the batch object by BATCH ID provided and also deletes the entire folder of image data for that batch
+    '''
     if request.method=="POST":
         batchid=request.POST.get("batchid")
         try:
@@ -307,9 +357,9 @@ def deleteBatch(request,bat_id):
 
                 stu_obj.batch_array=batch_arr
                 stu_obj.save()
-            dir=os.path.join(BASE_DIR,"ImageData")
-            path=os.path.join(dir,str(bat_id))
-            shutil.rmtree(path)
+            dire=os.path.join(BASE_DIR,"ImageData")
+            path=os.path.join(dire,str(bat_id))
+            shutil.rmtree(path)   # deleting the image data for this batch
 
             messages.success(request,"Batch "+name+" deleted successfully")
             return redirect('manageb')
@@ -320,6 +370,9 @@ def deleteBatch(request,bat_id):
     return render(request,"HOD/delete_batch.html",{"batch":batch})
 
 def studentBatchReset(student):
+    '''
+    for reseting the batch of student object
+    '''
     batches=student.batch_id.all()
     ba=[]
     for b in batches:
@@ -328,15 +381,31 @@ def studentBatchReset(student):
     student.batch_array=batch_arr
     student.save()
 
+
+def deleteAllBatchData(batchids):
+    dire=os.path.join(BASE_DIR,"ImageData")
+    for bat_id in batchids:
+        path=os.path.join(dire,str(bat_id))
+        shutil.rmtree(path)   # deleting the image data for this batch
+
+
 def deleteCourse(request,cou_id):
+    '''
+    It deletes the course object
+    '''
     if request.method=="POST":
         try:
             courseid=request.POST.get("courseid")
             course=Course.objects.get(id=courseid)
+            batches=Batch.objects.filter(course_id=course)
+            biid=[]  # for storing batch ids of batches to be deleted
             course.delete()
             students=Students.objects.all()
             for student in students:
                 studentBatchReset(student)
+            for batch in batches:
+                biid.append(batch.id)
+            deleteAllBatchData(biid)    # deleting all image data for batches that are automatically deleted
             messages.success(request,"Course Deleted")
             return redirect('managec')
         except:
@@ -346,6 +415,9 @@ def deleteCourse(request,cou_id):
     return render(request,"HOD/delete_course.html",{"course":course})
 
 def deleteInstructor(request,ins_id):
+    '''
+    deletes the instructor object from DB
+    '''
     if request.method=="POST":
         instructorid=request.POST.get("instructorid")
         try:
@@ -365,6 +437,9 @@ def deleteInstructor(request,ins_id):
     return render(request,"HOD/delete_instructor.html",{"instructor":instructor})
 
 def deleteStudent(request,stu_id):
+    '''
+    deletes the instructor object
+    '''
     if request.method=="POST":
         studentid=request.POST.get("studentid")
         try:
@@ -391,6 +466,9 @@ def deleteStudent(request,stu_id):
     return render(request,"HOD/delete_student.html",{"student":student})
 
 def registerFace(request,us_id):
+    '''
+    for registering image data for student and storing in folder by batch id
+    '''
     if request.method=="POST":
         try:
             userid=request.POST.get("userid")
@@ -438,6 +516,9 @@ def registerFace(request,us_id):
 
 
 def deleteFace(request,us_id):
+    '''
+    for deleting the image capture of the student
+    '''
     if request.method=="POST":
         try:
             studentid=request.POST.get("studentid")
