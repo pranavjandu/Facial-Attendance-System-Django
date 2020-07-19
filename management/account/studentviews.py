@@ -1,68 +1,62 @@
-from .models import Attendance, Batch, Course, CustomUser, Instructor, Mark, MarkReport, Notification,Students
-from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
-from django.contrib.auth import login,logout,authenticate
-from django.contrib import messages
-from django.urls import reverse
-from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
-from json import dumps
-
-import os
-import dlib
-import cv2
-from imutils import face_utils,resize
-from imutils.video import VideoStream
-from imutils.face_utils import FaceAligner
-
-from face_recognition import face_encodings
-from face_recognition.face_recognition_cli import image_files_in_folder
-import numpy as np
-import pickle
-from sklearn.preprocessing import LabelEncoder
-from sklearn.svm import SVC
+from .models import Attendance, Batch, Mark, MarkReport, Notification,Students   # Models Import
+from django.shortcuts import redirect, render
+from django.contrib import messages  # For success and error messages display
 
 def studentDashboard(request):
-    if request.method=="POST":
+    '''
+    For displaying notifications recieved on dashboard
+    '''
+    if request.method=="POST":      # If user press clear notifications
         try:
             x=request.POST.get("delete")
-            notifics=Notification.objects.filter(recieveN=request.user)
+            notifics=Notification.objects.filter(recieveN=request.user)    #getting notifications from DB
             for n in notifics:
-                n.delete()
+                n.delete()         #deleting all objects
             messages.success(request,"Successfully Cleared")
             return redirect('studashboard')
         except:
             messages.error(request,"Something went wrong")
             return redirect('studashboard')
-    notifics=Notification.objects.filter(recieveN=request.user)
+    notifics=Notification.objects.filter(recieveN=request.user)   #getting notifications from DB
     return render(request,"Student/dashboard.html",{"notification":notifics})
 
 
 def stuCourses(request):
-    student=Students.objects.get(user=request.user)
-    batches=student.batch_id.all()
+    '''
+    For displaying all enrolled batches for logined student
+    '''
+    student=Students.objects.get(user=request.user)   
+    batches=student.batch_id.all()   #getting batches for which student is enrolled
     return render(request,"Student/batches.html",{"batches":batches})
 
 def seeAttendance(request,bat_id):
+    '''
+    For students to view the dates they were present for a particular batch
+    '''
     batch=Batch.objects.get(id=bat_id)
-    atten=Attendance.objects.filter(subject_id=batch)
+    atten=Attendance.objects.filter(subject_id=batch)   #filtering all attendance objects by batch
     user=request.user
-    student=Students.objects.get(user=user)
-    attreps=student.attendancereports.all()
+    student=Students.objects.get(user=user)   #getting student object of logged in user
+    attreps=student.attendancereports.all() 
     attendanceObjects=[]     #getting attendance objects for days present 
     for attrep in attreps:
         atten=attrep.attendance_id
-        if atten.subject_id==batch:
+        if atten.subject_id==batch:      
             attendanceObjects.append(atten)
     return render(request,"Student/seeatten.html",{"attendances":attendanceObjects,"batch":batch})
 
 
 def seeMarks(request,bat_id):
+    '''
+    For students to view the marks they were given for a particular batch
+    '''
     batch=Batch.objects.get(id=bat_id)
     user=request.user
-    student=Students.objects.get(user=user)
+    student=Students.objects.get(user=user)   #getting student object of logged in user
     markobjs=Mark.objects.filter(batch_id=batch)
-    mreports=[]
+    mreports=[]     #for getting marksreport objects of the student
     for markobj in markobjs:
-        stat=MarkReport.objects.filter(mark_id=markobj,student_id=student).exists()
+        stat=MarkReport.objects.filter(mark_id=markobj,student_id=student).exists()   #checking if markreport object exists 
         if stat==True: 
             markrep=MarkReport.objects.get(mark_id=markobj,student_id=student)
             mreports.append(markrep)

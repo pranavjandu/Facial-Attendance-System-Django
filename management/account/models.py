@@ -1,5 +1,4 @@
 from django.db import models
-# Create your models here.
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -98,6 +97,9 @@ class Notification(models.Model):
 
 @receiver(post_save,sender=CustomUser)
 def create_user_profile(sender,instance,created,**kwargs):
+    '''
+    For creating objects of user type from CustomUser object using django signals
+    '''
     if created:
         if instance.user_type==1:
             Admin.objects.create(user=instance,name="admin")
@@ -108,6 +110,9 @@ def create_user_profile(sender,instance,created,**kwargs):
 
 @receiver(post_save,sender=CustomUser)
 def save_user_profile(sender,instance,**kwargs):
+    '''
+    For saving objects of user type from CustomUser object using django signals
+    '''
     if instance.user_type==1:
         instance.admin.save()
     if instance.user_type==2:

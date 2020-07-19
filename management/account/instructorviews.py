@@ -1,28 +1,13 @@
 
-from os import execlp
 import face_recognition
-from numpy.core.getlimits import MachArLike
-from .models import Attendance, AttendanceReport, Batch, Course, CustomUser, Instructor, Notification,Students,Mark,MarkReport
-from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
-from django.contrib.auth import login,logout,authenticate
+from .models import Attendance, AttendanceReport, Batch, Instructor, Notification,Students,Mark,MarkReport
+from django.shortcuts import redirect, render,HttpResponseRedirect
 from django.contrib import messages
 from django.urls import reverse
-from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
-from json import dumps 
 
 import os
-import dlib
 import cv2
-from imutils import face_utils,resize
-from imutils.video import VideoStream
-from imutils.face_utils import FaceAligner
-
-from face_recognition import face_encodings
-from face_recognition.face_recognition_cli import image_files_in_folder
 import numpy as np
-import pickle
-from sklearn.preprocessing import LabelEncoder
-from sklearn.svm import SVC
 
 import datetime
 import csv
@@ -60,6 +45,9 @@ def viewstudents(request,bat_id):
     return render(request,'Instructor/viewstu.html',{"students":students,"batch":bat_obj}) 
 
 def findEncodings(images):
+    '''
+    creating a list of encodings for all images 
+    '''
     encodeList=[]
     for img in images:
         img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
@@ -70,6 +58,14 @@ def findEncodings(images):
     
 
 def markAttendance(student_id,att_id):
+    '''
+    Marking attendance in the DB
+
+    kwargs:
+
+    student_id: ID of student to mark attendance for
+    att_id: ID of the attendance object
+    '''
     att=Attendance.objects.get(id=att_id)
     attrep=AttendanceReport.objects.get_or_create(attendance_id=att)
     if attrep.status==False:
@@ -93,51 +89,51 @@ def attendance(request,bat_id):
         bat_name=batch_obj.batch_name
         att=Attendance.objects.get_or_create(subject_id=batch_obj,attendance_date=datetime.date.today())
         attid=att[0].id
-        path='ImageData'
-        images=[]
-        imageNames=[]
-        studentMarked=[]
+        path='ImageData'    #path in base dir for saving images by BATCH_ID folders
+        images=[]           # for name of images with extention
+        imageNames=[]       # for name of images without extention
+        studentMarked=[]     #list of students already marked present
         exactpath=os.path.join(BASE_DIR,path)
         exactpath=exactpath+"/"+str(batchid)
-        myList=os.listdir(exactpath)
+        myList=os.listdir(exactpath)    #listing all images in folder
 
         for cls in myList:
             curImg = cv2.imread(f'{exactpath}/{cls}')
             images.append(curImg)
             imageNames.append(os.path.splitext(cls)[0])
 
-        encodeListKnown=findEncodings(images)    #encodings of all known faces of this 
+        encodeListKnown=findEncodings(images)    #encodings of all known faces of this batch
 
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(0)     #capturing video
 
         while(True):
             success,img=cap.read()
-            imgSmall=cv2.resize(img,(0,0),None,0.25,0.25)
-            imgSmall=cv2.cvtColor(imgSmall,cv2.COLOR_BGR2RGB)
+            imgSmall=cv2.resize(img,(0,0),None,0.25,0.25)     #resizing for faster processing
+            imgSmall=cv2.cvtColor(imgSmall,cv2.COLOR_BGR2RGB)    #converting image to RGB mode
 
-            facesCurFrame = face_recognition.face_locations(imgSmall)
-            encodesCurFrame = face_recognition.face_encodings(imgSmall, facesCurFrame)
+            facesCurFrame = face_recognition.face_locations(imgSmall)      #getting face location in current image
+            encodesCurFrame = face_recognition.face_encodings(imgSmall, facesCurFrame)    #getting face encoding for current image
 
-            for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):
+            for encodeFace, faceLoc in zip(encodesCurFrame, facesCurFrame):    #checking the encodings and face locations
                 matches = face_recognition.compare_faces(encodeListKnown, encodeFace)
                 faceDis = face_recognition.face_distance(encodeListKnown, encodeFace)
                 if len(faceDis) is not 0:
                     matchIndex = np.argmin(faceDis)
-                    if matches[matchIndex]:
+                    if matches[matchIndex]:   #if the face matches
                         name1 = imageNames[matchIndex]     #this is student id 
                         st_o= Students.objects.get(id=name1)
                         name=st_o.name     #this is student name
-                        y1, x2, y2, x1 = faceLoc
-                        y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4
-                        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                        cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
-                        cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-                        if name1 not in studentMarked:
-                            studentMarked.append(name1)
-                            markAttendance(student_id=name1,att_id=attid)
+                        y1, x2, y2, x1 = faceLoc     #locations of face detected
+                        y1, x2, y2, x1 = y1 * 4, x2 * 4, y2 * 4, x1 * 4     #resizing image back to normal size
+                        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)   #creating a rectangle around the detected face
+                        cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)  
+                        cv2.putText(img, name, (x1 + 6, y2 - 6), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2) # for showing student name on the rectangle above
+                        if name1 not in studentMarked: #marking attendance if not already marked
+                            studentMarked.append(name1)    #adding to marked list
+                            markAttendance(student_id=name1,att_id=attid)    #marking attendance
 
             cv2.imshow("Webcam",img)
-            key = cv2.waitKey(1) & 0xFF
+            key = cv2.waitKey(1) & 0xFF    #for waiting till key 's' is pressed
             if key == ord("s"):
                     break
 
@@ -146,16 +142,24 @@ def attendance(request,bat_id):
 
 
 def viewAttendance(request,bat_id):
+    '''
+    for viewing the attendance by date
+    '''
     batch=Batch.objects.get(id=bat_id)
     att=Attendance.objects.filter(subject_id=batch)
     return render(request,'Instructor/viewatt.html',{"atts":att,"batch":batch})
 
 def deleteatt(request,att_id):
+    '''
+    for deleting that attendance object
+
+    if attendance object is deleted the corresponding attendanceReports objects are also deleted automatically
+    '''
     if request.method=="POST":
         attid=request.POST.get("attid")
         try:
             att=Attendance.objects.get(id=attid)
-            att.delete()
+            att.delete()     #deleting object
             messages.success(request,"Attendance deleted")
             return redirect('insbatch')
         except:
@@ -166,6 +170,9 @@ def deleteatt(request,att_id):
     return render(request,'Instructor/deleteattendance.html',{"att":att})
     
 def attStudents(request,att_id,bat_id):
+    '''
+    For viewing students present and absent on a particular date 
+    '''
     batch=Batch.objects.get(id=bat_id)
     studentssss=batch.studentss.all()
     ba=[]     #total students in batch
@@ -186,15 +193,18 @@ def attStudents(request,att_id,bat_id):
 
 
 def sendNotification(request,stu_id):
+    '''
+    for sending notification to student with student ID as stu_id
+    '''
     if request.method=="POST":
         try:
             text=request.POST.get("messtext")
             stuid=request.POST.get("stuid")
-            user=request.user
-            instructor=Instructor.objects.get(user=user)
+            user=request.user   #getting logged in  user
+            instructor=Instructor.objects.get(user=user)     #getting instructor object from user
             student=Students.objects.get(id=stuid)
-            ruser=student.user
-            Notification.objects.create(sendN=instructor,recieveN=ruser,msg_content=text)
+            ruser=student.user  # This is user object of the reciever student
+            Notification.objects.create(sendN=instructor,recieveN=ruser,msg_content=text)   #sending notification
             messages.success(request,"Notification Sent successfully")
             return redirect('insdashboard')
         except:
@@ -205,14 +215,19 @@ def sendNotification(request,stu_id):
     
 
 def sendNotification2(request,att_id,stu_id):
+    '''
+    for sending notification to student with student ID as stu_id and attendance ID as att_id
+
+    This function is redundant but there to prevent a bug.
+    '''
     if request.method=="POST":
         try:
             text=request.POST.get("messtext")
             stuid=request.POST.get("stuid")
-            user=request.user
-            instructor=Instructor.objects.get(user=user)
+            user=request.user     #getting logged in  user
+            instructor=Instructor.objects.get(user=user)    #getting instructor object from user
             student=Students.objects.get(id=stuid)
-            ruser=student.user
+            ruser=student.user   # This is user object of the reciever student
             Notification.objects.create(sendN=instructor,recieveN=ruser,msg_content=text)
             messages.success(request,"Notification Sent successfully")
             return redirect('insdashboard')
@@ -223,6 +238,9 @@ def sendNotification2(request,att_id,stu_id):
     return render(request,'Instructor/sendnotif.html',{"student":student})
 
 def marks(request):
+    '''
+    for viewing the list of batches for instructor thats logged in
+    '''
     user_obj=request.user  #getting the user object
     ins_id=user_obj.instructor.id  #getting instructor from django user
     batches=Batch.objects.filter(instructor_id=ins_id)  #filtering batches for instructor
@@ -230,16 +248,29 @@ def marks(request):
 
 
 def listMark(request,bat_id):
+    '''
+    for getting a list of marks objects corresponding to BATCH ID as bat_id
+    '''
     batch=Batch.objects.get(id=bat_id)
     mark_objs=Mark.objects.filter(batch_id=batch)
     return render(request,"Instructor/listmarks.html",{"marks":mark_objs,"bat":bat_id})
 
 def createMarks(request,bat_id):
+    '''
+    for creating a new marks object
+
+    this function does not have a template of it's own and only has a functionality.
+    '''
     batch=Batch.objects.get(id=bat_id)
     mark,success=Mark.objects.get_or_create(batch_id=batch,test_date=datetime.date.today())
     return HttpResponseRedirect(reverse("listmarks",kwargs={"bat_id":bat_id}))
 
-def addMarks(request,mark_id):    #showing list of students
+def addMarks(request,mark_id): 
+    '''
+    for viewing list of students and viewing there marks
+
+    provides functionality of adding or editing marks
+    '''
     mark=Mark.objects.get(id=mark_id)
     batch=mark.batch_id
     students=Students.objects.filter(batch_id=batch)    #getting all students in that batch
@@ -252,6 +283,9 @@ def addMarks(request,mark_id):    #showing list of students
     
 
 def putMarks(request,stu_id,mark_id):
+    '''
+    For adding or editing the marks by inputing them into input box
+    '''
     if request.method=="POST":
         m=request.POST.get("mark")     #getting how many marks student got
         mark=Mark.objects.get(id=mark_id)

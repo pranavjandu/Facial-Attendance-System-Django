@@ -3,6 +3,8 @@ from django_filters import CharFilter
 from .models import *
 from django import forms
 
+#These filters are used for filtering out the query set in templates according to models
+
 class InstructorFilter(django_filters.FilterSet):
     name=CharFilter(field_name="name",lookup_expr='icontains')
     class Meta:

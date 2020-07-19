@@ -6,6 +6,9 @@ from django.contrib import admin
 
 
 class restrictionMiddleware(MiddlewareMixin):
+    '''
+    For restricting the user to view only pages they are supposed to
+    '''
 
     def process_view(self,request,view_func,view_args,view_kwargs):
         modulename=view_func.__module__

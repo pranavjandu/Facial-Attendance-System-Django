@@ -1,29 +1,15 @@
 from .models import Batch, Course, CustomUser, Instructor,Students
-from django.shortcuts import redirect, render,HttpResponse,HttpResponseRedirect
-from django.contrib.auth import login,logout,authenticate
+from django.shortcuts import redirect, render,HttpResponseRedirect
 from django.contrib import messages
 from django.urls import reverse
 from .filters import InstructorFilter,StudentFilter,CourseFilter,BatchFilter
 from json import dumps,loads
 
 import os
-import dlib
 import cv2
-from imutils import face_utils,resize
-from imutils.video import VideoStream
-from imutils.face_utils import FaceAligner
 import face_recognition
-from face_recognition import face_encodings
-from face_recognition.face_recognition_cli import image_files_in_folder
-import numpy as np
-import pickle
-from sklearn.preprocessing import LabelEncoder
-from sklearn.svm import SVC
-
-from PIL import Image
 from.exceptions import MultipleFaceException
 import shutil
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
  
 
@@ -445,6 +431,7 @@ def registerFace(request,us_id):
             cv2.destroyAllWindows()
         except:
             messages.error(request,"Something went wrong! Try Again")
+            cv2.destroyAllWindows()
 
             
     return render(request,"HOD/createdataset.html",{"userid":us_id})
