@@ -1,6 +1,5 @@
 
 
-
 from django.urls import path
 from . import views,adminviews,instructorviews,studentviews
 
@@ -43,7 +42,8 @@ urlpatterns = [
     path('check_students/send_notification/<str:stu_id>',instructorviews.sendNotification),
     path('viewAttendance/att_students/<str:att_id>/send_notification/<str:stu_id>',instructorviews.sendNotification2),
     path('marks',instructorviews.marks,name="insmarks"),
-    path('add_marks/<str:bat_id>',instructorviews.addMarks,name="addmarks"),
-    path('edit_marks/<str:bat_id>',instructorviews.editMarks),
-    path('add_marks/put_marks/<str:stu_id>/<str:mark_id>',instructorviews.putMarks)
+    path('list_marks/create_marks/<str:bat_id>',instructorviews.createMarks),
+    path('add_marks/<str:mark_id>',instructorviews.addMarks,name="addmarks"),
+    path('add_marks/put_marks/<str:stu_id>/<str:mark_id>',instructorviews.putMarks),
+    path('list_marks/<str:bat_id>',instructorviews.listMark,name="listmarks")
 ]

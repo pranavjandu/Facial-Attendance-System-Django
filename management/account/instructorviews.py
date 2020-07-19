@@ -229,9 +229,19 @@ def marks(request):
     return render(request,"Instructor/marks.html",{"batches":batches})  #rendering template
 
 
-def addMarks(request,bat_id):    #showing list of stuents
+def listMark(request,bat_id):
+    batch=Batch.objects.get(id=bat_id)
+    mark_objs=Mark.objects.filter(batch_id=batch)
+    return render(request,"Instructor/listmarks.html",{"marks":mark_objs,"bat":bat_id})
+
+def createMarks(request,bat_id):
     batch=Batch.objects.get(id=bat_id)
     mark,success=Mark.objects.get_or_create(batch_id=batch,test_date=datetime.date.today())
+    return HttpResponseRedirect(reverse("listmarks",kwargs={"bat_id":bat_id}))
+
+def addMarks(request,mark_id):    #showing list of students
+    mark=Mark.objects.get(id=mark_id)
+    batch=mark.batch_id
     students=Students.objects.filter(batch_id=batch)    #getting all students in that batch
     markss=[]
     for st in students:
@@ -256,13 +266,10 @@ def putMarks(request,stu_id,mark_id):
                 rep.mark=m
                 rep.save()
                 messages.success(request,"Marks edited")
-            return HttpResponseRedirect(reverse("addmarks",kwargs={"bat_id":mark.batch_id.id}))
+            return HttpResponseRedirect(reverse("addmarks",kwargs={"mark_id":mark.id}))
         except:
             messages.error(request,"Something went wrong")
-            return HttpResponseRedirect(reverse("addmarks",kwargs={"bat_id":mark.batch_id.id}))
+            return HttpResponseRedirect(reverse("addmarks",kwargs={"mark_id":mark.id}))
     student=Students.objects.get(id=stu_id)
     return render(request,'Instructor/putmarks.html',{"student":student})
     
-
-def editMarks(request,bat_id):
-    pass

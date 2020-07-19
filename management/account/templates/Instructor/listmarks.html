@@ -29,7 +29,7 @@ Marks
         <div class="col-md-12 ">
             <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Batch Details</h3>
+                    <h3 class="card-title">Date of Tests</h3>
                 </div>
                 <div class="form-group">
                     {% if messages %}
@@ -43,27 +43,26 @@ Marks
                     {% endfor %}
                     {% endif %}
                 </div>
+                
                 <div class="card-body table-responsive p-0">
+                    <div class="text-center mt-1"> 
+                        <a href="create_marks/{{bat}}" class="btn btn-success">Add new Test</a>
+                    </div>
+                    <br/>
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>Batch</th>
-                                <th>Course Name</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Days</th>
+                                <th>ID</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for batch in batches %}
+                            {% for mark in marks %}
                             <tr>
-                                <td>{{ batch.batch_name }}</td>
-                                <td>{{ batch.course_id }}</td>
-                                <td>{{ batch.start_time }}</td>
-                                <td>{{ batch.end_time }}</td>
-                                <td>{{ batch.days}}</td>
-                                <td><a href="/list_marks/{{ batch.id }}" class="btn btn-info">List of Marks</a>
+                                <td>{{ mark.id }}</td>
+                                <td>{{ mark.test_date|date:'M d, Y' }}</td>
+                                <td><a href="/add_marks/{{ mark.id }}" class="btn btn-success">Add Marks</a>
                                 </td>
                             </tr>
                             {% endfor %}
