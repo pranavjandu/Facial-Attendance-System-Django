@@ -1,7 +1,7 @@
 
 import face_recognition
 from .models import Attendance, AttendanceReport, Batch, Instructor, Notification,Students,Mark,MarkReport
-from django.shortcuts import redirect, render,HttpResponseRedirect
+from django.shortcuts import redirect, render,HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.urls import reverse
 
@@ -306,4 +306,59 @@ def putMarks(request,stu_id,mark_id):
             return HttpResponseRedirect(reverse("addmarks",kwargs={"mark_id":mark.id}))
     student=Students.objects.get(id=stu_id)
     return render(request,'Instructor/putmarks.html',{"student":student})
+
+
+def reportPage(request):
+    '''
+    renders template that shows all the batches of instructor for report generation
+    '''
+    user_obj=request.user  #getting the user object
+    ins_id=user_obj.instructor.id  #getting instructor from django user
+    batches=Batch.objects.filter(instructor_id=ins_id)  #filtering batches for instructor
+    return render(request,"Instructor/report.html",{"batches":batches})  #rendering template
+
+def reportGenerate(request,bat_id):
+    '''
+    Generates a csv report and sends a response as an attachment
+
+    kwargs:
+
+    bat_id : batch ID for which report is to be generated
+    '''
+    batch=Batch.objects.get(id=bat_id)
+    studentssss=batch.studentss.all()   #all students in that batch
+    response=HttpResponse(content_type='text/csv')
+
+    csv_writer=csv.writer(response)
+    csv_writer.writerow(['Student Name','Dates Present','Marks'])
+
+    for student in studentssss:
+        datesPRESENT=[]   #getting dates on which student is present
+        attreps=student.attendancereports.all()  #getting attendance reports of the student
+        for attrep in attreps:
+            atten=attrep.attendance_id
+            if atten.subject_id==batch:      
+                datestring=atten.attendance_date
+                datestring=datestring.strftime('%Y-%m-%d')
+                datesPRESENT.append(datestring)
+        datesPRESENT.sort()
+        markREPO=[]    #filtering markreports of this batch with test dates
+        markreports=student.markrep.all()
+        for markrep in markreports:
+            m=markrep.mark_id
+            if m.batch_id==batch:
+                datestring=m.test_date
+                datestring=datestring.strftime('%Y-%m-%d')
+                markREPO.append(tuple([datestring,markrep.mark]))
+
+        #writing to rows of csv file
+
+        csv_writer.writerow([student.name,datesPRESENT,markREPO])
+    
+    response['Content-Disposition']='attachment; filename="report.csv"'
+    return response
+
+
+           
+
     

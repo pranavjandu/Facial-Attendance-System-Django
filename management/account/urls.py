@@ -47,5 +47,7 @@ urlpatterns = [
     path('list_marks/create_marks/<str:bat_id>',instructorviews.createMarks),
     path('add_marks/<str:mark_id>',instructorviews.addMarks,name="addmarks"),
     path('add_marks/put_marks/<str:stu_id>/<str:mark_id>',instructorviews.putMarks),
-    path('list_marks/<str:bat_id>',instructorviews.listMark,name="listmarks")
+    path('list_marks/<str:bat_id>',instructorviews.listMark,name="listmarks"),
+    path('report',instructorviews.reportPage,name="insreport"),
+    path('generate_report/<str:bat_id>',instructorviews.reportGenerate)
 ]

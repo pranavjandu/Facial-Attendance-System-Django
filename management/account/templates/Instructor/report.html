@@ -1,6 +1,6 @@
 {% extends 'base.html'%}
 {% block title%}
-Marks
+Generate Report
 {% endblock title %}
 
 {% block sidebarstuff %}
@@ -16,12 +16,12 @@ Marks
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link active" href="{% url 'insmarks' %}">
+    <a class="nav-link" href="{% url 'insmarks' %}">
         Marks
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link" href="{% url 'insreport' %}">
+    <a class="nav-link active" href="{% url 'insreport' %}">
         Generate Report
     </a>
 </li>
@@ -34,7 +34,7 @@ Marks
         <div class="col-md-12 ">
             <div class="card card-primary mt-5">
                 <div class="card-header">
-                    <h3 class="card-title">Date of Tests</h3>
+                    <h3 class="card-title">Generate report for Batch</h3>
                 </div>
                 <div class="form-group">
                     {% if messages %}
@@ -48,26 +48,27 @@ Marks
                     {% endfor %}
                     {% endif %}
                 </div>
-                
                 <div class="card-body table-responsive p-0">
-                    <div class="text-center mt-1"> 
-                        <a href="create_marks/{{bat}}" class="btn btn-success">Add new Test</a>
-                    </div>
-                    <br/>
                     <table class="table table-hover text-nowrap">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Date</th>
+                                <th>Batch</th>
+                                <th>Course Name</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Days</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for mark in marks %}
+                            {% for batch in batches %}
                             <tr>
-                                <td>{{ mark.id }}</td>
-                                <td>{{ mark.test_date|date:'M d, Y' }}</td>
-                                <td><a href="/add_marks/{{ mark.id }}" class="btn btn-success">Add Marks</a>
+                                <td>{{ batch.batch_name }}</td>
+                                <td>{{ batch.course_id }}</td>
+                                <td>{{ batch.start_time }}</td>
+                                <td>{{ batch.end_time }}</td>
+                                <td>{{ batch.days}}</td>
+                                <td><a href="/generate_report/{{ batch.id }}" class="btn btn-info">Generate Report</a>
                                 </td>
                             </tr>
                             {% endfor %}
